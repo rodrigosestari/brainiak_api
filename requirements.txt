@@ -1,16 +1,22 @@
-DAD==1.0.2
-greenlet==0.4.0
-gunicorn==19.1.0
-pycurl==7.19.0
-rdflib==3.2.3
-redis==2.7.6
-requests==2.0.1
-simplejson==3.4.1
-stomp.py==3.1.3
-supervisor==3.0b2
+pyopensslexport PYCURL_SSL_LIBRARY=opensslsudo pip install mozdownload
+requests
+greenlet
+gunicorn
+pycurl
+rdflib
+redis
+requests
+simplejson
+stomp.py
+supervisor
 -e git://github.com/tatiana/tornado.git#egg=tornado
-tornado-cors==0.4.0
-ujson==1.33
-jsonschema==2.3.0
-alf==0.4
-python-dateutil==2.2
+tornado-cors
+ujson
+jsonschema
+alf
+python-dateutil
+
+
+sphinx
+sphinx-rtd-theme
+semantic_web_pygments
