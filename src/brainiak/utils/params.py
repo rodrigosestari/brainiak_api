@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from copy import copy
 import re
-from urllib import urlencode
-from urlparse import unquote, parse_qs
+from urllib.parse import unquote, parse_qs, urlencode
 from contextlib import contextmanager
 
 from tornado.web import HTTPError

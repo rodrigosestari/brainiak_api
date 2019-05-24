@@ -1,6 +1,5 @@
-from urlparse import parse_qs, urlsplit, urlunsplit
 from math import ceil
-from urllib import urlencode, unquote
+from urllib.parse import unquote, parse_qs, urlencode, urlunsplit, urlsplit
 
 
 def split_prefix_and_id_from_uri(url):

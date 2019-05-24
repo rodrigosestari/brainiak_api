@@ -1,6 +1,6 @@
 import re
 import stomp
-from stomp.exception import ConnectionClosedException, ConnectFailedException, NotConnectedException, ProtocolException
+from stomp.exception import ConnectionClosedException, ConnectFailedException, NotConnectedException
 
 
 class MiddlewareError(Exception):
@@ -31,7 +31,7 @@ class Middleware(object):
                 return False
         try:
             self.connection.send(data, destination=self.destination)
-        except (ConnectionClosedException, ConnectFailedException, NotConnectedException, ProtocolException) as e:
+        except (ConnectionClosedException, ConnectFailedException, NotConnectedException) as e:
             msg = "ActiveMQ at {0}:{1} unavailable due to {2}.".format(self.host, self.port, str(e.__class__))
             raise MiddlewareError(msg)
         return True
@@ -62,7 +62,7 @@ class Middleware(object):
         try:
             self.connection.begin(transaction='123')
             self.connection.abort(transaction='123')
-        except (ConnectionClosedException, ConnectFailedException, NotConnectedException, ProtocolException) as e:
+        except (ConnectionClosedException, ConnectFailedException, NotConnectedException) as e:
             error = re.sub('<class|>', '', str(e.__class__))
         else:
             error = ""

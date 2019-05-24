@@ -82,7 +82,7 @@ def safe_params(valid_params=None, body_params=None):
         raise HTTPError(400, log_message=msg)
     except RequiredParamMissing as ex:
         msg = _(u"Required parameter ({0:s}) was not given.").format(ex)
-        raise HTTPError(400, log_message=unicode(msg))
+        raise HTTPError(400, log_message=str(msg,'utf-8'))
 
 
 class BrainiakRequestHandler(CorsMixin, RequestHandler):
@@ -127,15 +127,15 @@ class BrainiakRequestHandler(CorsMixin, RequestHandler):
             self.send_error(status_code, message=message)
 
         elif isinstance(e, HTTPClientError):
-            message = _(u"Access to backend service failed.  {0:s}.").format(unicode(e))
-            extra_messages = check_messages_when_port_is_mentioned(unicode(e))
+            message = _(u"Access to backend service failed.  {0:s}.").format(str(e,'utf-8'))
+            extra_messages = check_messages_when_port_is_mentioned(str(e,'utf-8'))
             if extra_messages:
                 for msg in extra_messages:
                     message += msg
 
             if hasattr(e, "response") and e.response is not None and \
                hasattr(e.response, "body") and e.response.body is not None:
-                    message += _(u"\nResponse:\n") + unicode(str(e.response.body).decode("utf-8"))
+                    message += _(u"\nResponse:\n") + str(e.response.body,"utf-8")
 
             logger.error(message)
             self.send_error(status_code, message=message)

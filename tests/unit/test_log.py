@@ -1,5 +1,7 @@
 import logging
 import unittest
+import sys
+import unittest
 
 from brainiak import log
 

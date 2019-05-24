@@ -4,6 +4,7 @@ import tornado
 from tornado.httpclient import HTTPRequest
 from tornado.testing import AsyncTestCase, AsyncHTTPTestCase
 from brainiak import server, greenlet_tornado
+from tornado.log import gen_log
 
 
 TIMEOUT = 100  # None or small values cause some integration tests to fail
