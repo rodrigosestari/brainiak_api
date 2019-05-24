@@ -9,7 +9,7 @@ GET_COMMIT = 'git rev-parse --verify HEAD'
 
 def run(cmd):
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    return process.stdout.readline().split('\n')[0]
+    return  "".join(chr(x) for x in process.stdout.readline()).split('\n')[0]
 
 
 def is_available():
@@ -50,7 +50,8 @@ def get_version_hash():
 def get_code_version():
     label = get_version_label()
     commit = get_version_hash()
-    version = u"%s | %s" % (unicode(label), unicode(commit))
+    version = u"%s | %s" % (label, commit)
+    print(version)
     return version
 
 
