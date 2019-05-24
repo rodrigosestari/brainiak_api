@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from urlparse import urlparse, parse_qs
+import urllib.parse
 from brainiak.prefixes import expand_uri
 from brainiak.utils.params import normalize_last_slash
 
@@ -69,7 +69,7 @@ class MockRequest(object):
         self.uri = uri
         if instance:
             self.uri = u"%s%s" % (self.uri, instance)
-        parsed_url = urlparse(self.uri)
+        parsed_url = urllib.parse(self.uri)
         self.path = parsed_url.path
         self.protocol = parsed_url.scheme
         self.host = parsed_url.netloc
@@ -105,7 +105,7 @@ class MockHandler():
             self._headers = {}
         else:
             self._headers = headers
-        _parsed_url = urlparse(uri)
+        _parsed_url = urllib.parse(uri)
         self._path = _parsed_url.path
         self._protocol = _parsed_url.scheme
         self._host = _parsed_url.netloc

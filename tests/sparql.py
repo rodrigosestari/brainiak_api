@@ -3,7 +3,7 @@ import re
 import shutil
 import subprocess
 import unittest
-import urllib2
+import urllib
 
 import rdflib
 
@@ -165,7 +165,7 @@ class QueryTestCase(SimpleTestCase):
         try:
             isql_drop = ISQL_DROP % {"graph": graph}
             run_isql(isql_drop)
-        except Exception, e:
+        except Exception as e:
             pass
             #print(e)
 

@@ -6,7 +6,7 @@ import traceback
 from contextlib import contextmanager
 
 import ujson as json
-from urllib import unquote
+import urllib.parse
 from tornado.httpclient import HTTPError as HTTPClientError
 from tornado.web import HTTPError, RequestHandler
 from tornado_cors import CorsMixin, custom_decorator

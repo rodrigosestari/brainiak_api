@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-from urllib import quote_plus
+import urllib.parse
 
 import requests
 from estester import ElasticSearchQueryTestCase

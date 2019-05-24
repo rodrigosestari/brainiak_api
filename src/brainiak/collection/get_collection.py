@@ -1,5 +1,5 @@
 import inspect
-from urllib import unquote
+import urllib.parse
 
 from tornado.web import HTTPError
 
@@ -369,7 +369,7 @@ def cast_items_values(items_list, class_properties):
 
 def build_json(items_list, query_params):
     class_url = build_class_url(query_params)
-    schema_url = unquote(build_schema_url_for_instance(query_params, class_url))
+    schema_url = urllib.parse.unquote(build_schema_url_for_instance(query_params, class_url))
 
     class_properties = get_class.get_cached_schema(query_params)["properties"]
     items_list = cast_items_values(items_list, class_properties)

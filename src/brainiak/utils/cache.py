@@ -1,4 +1,4 @@
-import md5
+import hashlib
 import traceback
 from email.utils import formatdate
 

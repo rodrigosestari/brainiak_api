@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from urlparse import urlparse
+import urllib.parse
 from brainiak import triplestore, settings
 from brainiak.log import get_logger
 from brainiak.prefixes import MemorizeContext
@@ -47,7 +47,7 @@ def get_schema(query_params):
 
 
 def absolut_base_url(base_url):
-    parsed = urlparse(base_url)
+    parsed = urllib.parse(base_url)
     return "{0}://{1}".format(parsed.scheme, parsed.netloc)
 
 

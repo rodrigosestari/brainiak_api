@@ -65,7 +65,7 @@ def log_request(log_params):
     """
         Just logs the request
     """
-    log_params["user_ip"] = unicode(None)
+    log_params["user_ip"] = None
     log_params["auth_username"] = log_params.get("auth_username", None)
     log_msg = format_post % log_params
     log.logger.info(log_msg)

@@ -2,7 +2,7 @@
 import re
 import cProfile
 import pstats
-import StringIO
+from io import StringIO
 from brainiak.prefixes import expand_uri, is_compressed_uri, ROOT_CONTEXT, shorten_uri
 from brainiak.utils.links import pagination_items
 from brainiak.settings import EVENT_BUS_PORT

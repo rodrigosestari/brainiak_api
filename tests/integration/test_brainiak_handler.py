@@ -1,5 +1,5 @@
 import json
-import StringIO
+from io import StringIO
 from mock import patch as patch_mock
 
 from tornado import locale

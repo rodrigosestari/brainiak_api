@@ -7,13 +7,15 @@ requests==2.22.0
 simplejson==3.16.0
 stomp.py==4.1.22
 supervisor==4.0.3
--e git://github.com/tatiana/tornado.git#egg=tornado
+tornado==6.0.2
 tornado-cors==0.6.0
 ujson==1.35
 jsonschema==3.0.1
 alf==0.7.1
 python-dateutil==2.8.0
 
+paramiko
+estester
 
 sphinx==2.0.1
 sphinx-rtd-theme==0.4.3

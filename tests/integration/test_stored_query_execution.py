@@ -1,5 +1,5 @@
 from mock import patch
-from urllib import quote_plus
+import urllib.parse
 
 import requests
 import ujson as json
@@ -42,7 +42,7 @@ class StoredQueryCRUDExecution(TornadoAsyncHTTPTestCase, QueryTestCase):
             u"items": [{u"s": u"http://test.com/person/Gender"}]
         }
 
-        graph_uri_encoded = quote_plus(self.graph_uri)
+        graph_uri_encoded = urllib.parse.quote_plus(self.graph_uri)
         request_uri = '/_query/q/_result?g={0}'.format(graph_uri_encoded)
         response = self.fetch(request_uri)
 

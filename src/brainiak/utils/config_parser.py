@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from ConfigParser import ConfigParser, NoSectionError
+from configparser import ConfigParser, NoSectionError
 
 from brainiak import settings
 

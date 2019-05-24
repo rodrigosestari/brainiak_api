@@ -48,8 +48,16 @@ class TornadoAsyncHTTPTestCase(AsyncHTTPTestCase):
 # Mokey patch dependencies bellow
 
 from tornado.curl_httpclient import *
-from tornado.curl_httpclient import _curl_header_callback
 
+def _curl_header_callback(headers, header_line):
+    # header_line as returned by curl includes the end-of-line characters.
+    header_line = header_line.strip()
+    if header_line.startswith("HTTP/"):
+        headers.clear()
+        return
+    if not header_line:
+        return
+    headers.parse_line(header_line)
 
 def _curl_setup_request(curl, request, buffer, headers):
     """
@@ -98,17 +106,8 @@ def _curl_setup_request(curl, request, buffer, headers):
         write_function = request.streaming_callback
     else:
         write_function = buffer.write
-    if bytes_type is str:  # py2
-        curl.setopt(pycurl.WRITEFUNCTION, write_function)
-    else:  # py3
-        # Upstream pycurl doesn't support py3, but ubuntu 12.10 includes
-        # a fork/port.  That version has a bug in which it passes unicode
-        # strings instead of bytes to the WRITEFUNCTION.  This means that
-        # if you use a WRITEFUNCTION (which tornado always does), you cannot
-        # download arbitrary binary data.  This needs to be fixed in the
-        # ported pycurl package, but in the meantime this lambda will
-        # make it work for downloading (utf8) text.
-        curl.setopt(pycurl.WRITEFUNCTION, lambda s: write_function(utf8(s)))
+
+    curl.setopt(pycurl.WRITEFUNCTION, lambda s: write_function(utf8(s)))
     curl.setopt(pycurl.FOLLOWLOCATION, request.follow_redirects)
     curl.setopt(pycurl.MAXREDIRS, request.max_redirects)
     curl.setopt(pycurl.CONNECTTIMEOUT_MS, int(1000 * request.connect_timeout))
