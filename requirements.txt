@@ -1,5 +1,3 @@
-pyopensslexport PYCURL_SSL_LIBRARY=opensslsudo pip install mozdownload
-requests
 greenlet
 gunicorn
 pycurl

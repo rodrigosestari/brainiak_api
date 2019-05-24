@@ -13,12 +13,15 @@ from tornado.httpclient import HTTPError as ClientHTTPError
 from tornado.web import HTTPError
 
 from brainiak import log
+from brainiak import settings
 from brainiak.greenlet_tornado import greenlet_fetch
 from brainiak.utils.config_parser import parse_section
 
-
 JSON_DECODE_ERROR_MESSAGE = "Could not decode JSON:\n  {0}"
-UNAUTHORIZED_MESSAGE = 'Check triplestore user and password.'
+UNAUTHORIZED_MESSAGE = "Check triplestore user and password."
+
+SLOW_QUERY_MESSAGE = "Slow query: took {0} seconds\n Query: {1}"
+SLOW_QUERY_TIMEOUT = settings.TRIPLESTORE_QUERY_TIMEOUT
 
 DEFAULT_VIRTUOSO_REQUEST_HEADERS = {
     "Content-Type": "application/x-www-form-urlencoded"
@@ -97,6 +100,8 @@ def query_sparql(query, triplestore_config, async=True):
     log_params["query"] = unicode(query)
     log_params["time_diff"] = time_diff
     log_request(log_params)
+    if time_diff >= SLOW_QUERY_TIMEOUT:
+        log.logger.warning(SLOW_QUERY_MESSAGE.format(time_diff, query))
 
     result_dict = _process_json_triplestore_response(response, async)
     return result_dict

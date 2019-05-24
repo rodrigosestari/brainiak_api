@@ -1,6 +1,7 @@
 import re
 import subprocess
 
+
 GET_BRANCH = 'git rev-parse --abbrev-ref HEAD'
 GET_TAG = 'git describe --exact-match --tags HEAD'
 GET_COMMIT = 'git rev-parse --verify HEAD'
@@ -8,7 +9,7 @@ GET_COMMIT = 'git rev-parse --verify HEAD'
 
 def run(cmd):
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    return "".join(chr(x) for x in process.stdout.readline()).split('\n')[0]
+    return process.stdout.readline().split('\n')[0]
 
 
 def is_available():
@@ -49,9 +50,7 @@ def get_version_hash():
 def get_code_version():
     label = get_version_label()
     commit = get_version_hash()
-    print(label)
-    print(commit)
-    version = u"%s | %s" % (label, commit)
+    version = u"%s | %s" % (unicode(label), unicode(commit))
     return version
 
 

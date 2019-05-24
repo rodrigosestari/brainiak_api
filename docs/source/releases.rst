@@ -1,6 +1,34 @@
 Releases
 ========
 
+Version 2.9.0
+_____________
+
+- Changes the default result in instance lists disabling the inference for property values
+- New ``inference`` parameter (default is ``0``) used in instance lists to control inference in property values
+
+Version 2.8.1
+-------------
+
+- Logging slow queries (that take more than 1 second)
+
+Version 2.7.7 - 2014/08/19
+--------------------------
+
+Fix
+___________________
+
+- The class-schema in property href now has a absolute URL, this solution is a workaround to work in JSON form.
+
+Version 2.7.6 - 2014/08/19
+--------------------------
+
+Fixes, Improvements
+___________________
+
+- Stored queries can now register a ``time_to_live`` parameter to help cache invalidation in proxy servers. See (:doc:`/services/stored_query/stored_query`)
+
+
 Version 2.7.4 - 2014/08/14
 --------------------------
 

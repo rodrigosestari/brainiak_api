@@ -37,11 +37,12 @@ from brainiak.search.json_schema import schema as search_schema
 from brainiak.stored_query.collection import get_stored_queries
 from brainiak.stored_query.crud import store_query, get_stored_query, delete_stored_query, validate_headers
 from brainiak.stored_query.execution import execute_query
-from brainiak.stored_query.json_schema import query_crud_schema
+from brainiak.stored_query.json_schema import stored_query_crud_schema
 from brainiak.suggest.json_schema import SUGGEST_PARAM_SCHEMA
 from brainiak.suggest.suggest import do_suggest
 from brainiak.utils import cache
 from brainiak.utils.cache import memoize, build_instance_key
+from brainiak.utils.config_parser import get_all_configs, format_all_configs, purge_configs
 from brainiak.utils.i18n import _
 from brainiak.utils.json import validate_json_schema, get_json_request_as_dict
 from brainiak.utils.links import build_schema_url_for_instance, content_type_profile, build_schema_url, build_class_url
@@ -213,6 +214,11 @@ class BrainiakRequestHandler(CorsMixin, RequestHandler):
         self.write(response)
         # self.finish() -- this is automagically called by greenlet_asynchronous
 
+    def finalize_with_cache(self, response, max_age):
+        self.set_header("Cache-control", "max-age={0}".format(str(max_age)))
+
+        self.finalize(response)
+
 
 class RootJsonSchemaHandler(BrainiakRequestHandler):
 
@@ -373,7 +379,8 @@ class CollectionHandler(BrainiakRequestHandler):
 
     @greenlet_asynchronous
     def get(self, context_name, class_name):
-        valid_params = LIST_PARAMS + CLASS_PARAMS + DefaultParamsDict(direct_instances_only='0')
+        valid_params = LIST_PARAMS + CLASS_PARAMS + \
+            DefaultParamsDict(direct_instances_only='0', inference='0')
         with safe_params(valid_params):
             self.query_params = ParamDict(self,
                                           context_name=context_name,
@@ -782,6 +789,20 @@ class VirtuosoStatusHandler(BrainiakRequestHandler):
         self.write(triplestore.status())
 
 
+class TriplestoreConfigsStatusHandler(BrainiakRequestHandler):
+
+    SUPPORTED_METHODS = list(BrainiakRequestHandler.SUPPORTED_METHODS) + ["PURGE"]
+
+    def get(self):
+        configs = get_all_configs()
+        formatted_configs = format_all_configs(configs)
+        self.write(formatted_configs)
+
+    def purge(self):
+        purge_configs()
+        self.set_status(200)
+
+
 class CacheStatusHandler(BrainiakRequestHandler):
 
     def get(self):
@@ -829,7 +850,7 @@ class StoredQueryCollectionHandler(BrainiakRequestHandler):
             self.query_params = ParamDict(self, **valid_params)
             response = get_stored_queries(self.query_params)
 
-        self.write(response)
+        self.finalize_with_cache(response, 120)
 
 
 class StoredQueryCRUDHandler(BrainiakRequestHandler):
@@ -841,7 +862,7 @@ class StoredQueryCRUDHandler(BrainiakRequestHandler):
     def get(self, query_id):
         stored_query = get_stored_query(query_id)
         if stored_query is not None:
-            self.finalize(stored_query)
+            self.finalize(stored_query, 120)
         else:
             not_found_message = _("The stored query with id '{0}' was not found").format(query_id)
             raise HTTPError(404,
@@ -854,7 +875,7 @@ class StoredQueryCRUDHandler(BrainiakRequestHandler):
         client_id_dict = {"client_id": client_id}
 
         json_payload_object = get_json_request_as_dict(self.request.body)
-        validate_json_schema(json_payload_object, query_crud_schema)
+        validate_json_schema(json_payload_object, stored_query_crud_schema)
         json_payload_object.update(client_id_dict)
 
         # TODO return instance data when editing it?
@@ -869,10 +890,10 @@ class StoredQueryCRUDHandler(BrainiakRequestHandler):
         delete_stored_query(query_id, client_id)
         self.finalize(204)
 
-    def finalize(self, response):
+    def finalize(self, response, max_age=0):
         # FIXME: handle cache policy uniformly
         self.set_header("Cache-control", "private")
-        self.set_header("max-age", "0")
+        self.set_header("max-age", str(max_age))
 
         if isinstance(response, dict):
             self.write(response)
@@ -882,6 +903,8 @@ class StoredQueryCRUDHandler(BrainiakRequestHandler):
 
 
 class StoredQueryExecutionHandler(BrainiakRequestHandler):
+
+    DEFAULT_TIME_TO_LIVE = 60 * 5  # In seconds (5 minutes)
 
     @greenlet_asynchronous
     def get(self, query_id):
@@ -896,9 +919,9 @@ class StoredQueryExecutionHandler(BrainiakRequestHandler):
         with safe_params(valid_params):
             self.query_params = QueryExecutionParamDict(self)
             response = execute_query(query_id, stored_query, self.query_params)
+            time_to_live = stored_query.get("time_to_live", None) or self.DEFAULT_TIME_TO_LIVE
 
-        # return result
-        return self.finalize(response)
+        return self.finalize_with_cache(response, time_to_live)
 
 
 class UnmatchedHandler(BrainiakRequestHandler):

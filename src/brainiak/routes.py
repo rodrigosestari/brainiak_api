@@ -12,6 +12,7 @@ ROUTES = [
     URLSpec(r'/_status/activemq/?', EventBusStatusHandler),
     URLSpec(r'/_status/cache/?', CacheStatusHandler),
     URLSpec(r'/_status/virtuoso/?', VirtuosoStatusHandler),
+    URLSpec(r'/_triplestore_configs/?', TriplestoreConfigsStatusHandler),
     URLSpec(r'/_version/?', VersionHandler),
 
     URLSpec(r'/_schema_list/?', RootJsonSchemaHandler),
