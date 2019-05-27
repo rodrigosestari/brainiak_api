@@ -4,6 +4,7 @@
 import sys
 import traceback
 from contextlib import contextmanager
+from urllib.parse import unquote
 
 import ujson as json
 from tornado.httpclient import HTTPError as HTTPClientError
