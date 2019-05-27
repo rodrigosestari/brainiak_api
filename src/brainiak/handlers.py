@@ -6,13 +6,9 @@ import traceback
 from contextlib import contextmanager
 
 import ujson as json
-import urllib.parse
 from tornado.httpclient import HTTPError as HTTPClientError
 from tornado.web import HTTPError, RequestHandler
 from tornado_cors import CorsMixin, custom_decorator
-
-# must be imported before other modules
-from brainiak.log import get_logger
 
 from brainiak import __version__, event_bus, triplestore, settings
 from brainiak.collection.get_collection import filter_instances
@@ -26,19 +22,21 @@ from brainiak.instance.delete_instance import delete_instance
 from brainiak.instance.edit_instance import edit_instance, instance_exists
 from brainiak.instance.get_instance import get_instance
 from brainiak.instance.patch_instance import apply_patch, get_instance_data_from_patch_list
+# must be imported before other modules
+from brainiak.log import get_logger
 from brainiak.prefixes import normalize_all_uris_recursively, list_prefixes, SHORTEN
 from brainiak.root.get_root import list_all_contexts
 from brainiak.root.json_schema import schema as root_schema
 from brainiak.schema import get_class as schema_resource
 from brainiak.schema.get_class import SchemaNotFound
-from brainiak.search.search import do_search
-from brainiak.suggest.json_schema import schema as suggest_schema
 from brainiak.search.json_schema import schema as search_schema
+from brainiak.search.search import do_search
 from brainiak.stored_query.collection import get_stored_queries
 from brainiak.stored_query.crud import store_query, get_stored_query, delete_stored_query, validate_headers
 from brainiak.stored_query.execution import execute_query
 from brainiak.stored_query.json_schema import stored_query_crud_schema
 from brainiak.suggest.json_schema import SUGGEST_PARAM_SCHEMA
+from brainiak.suggest.json_schema import schema as suggest_schema
 from brainiak.suggest.suggest import do_suggest
 from brainiak.utils import cache
 from brainiak.utils.cache import memoize, build_instance_key
@@ -51,7 +49,6 @@ from brainiak.utils.params import CLASS_PARAMS, InvalidParam, LIST_PARAMS, GRAPH
 from brainiak.utils.params import QueryExecutionParamDict
 from brainiak.utils.resources import check_messages_when_port_is_mentioned, LazyObject, build_resource_url
 from brainiak.utils.sparql import extract_po_tuples, clean_up_reserved_attributes, InstanceError, is_rdf_type_invalid
-
 
 logger = LazyObject(get_logger)
 
@@ -82,11 +79,10 @@ def safe_params(valid_params=None, body_params=None):
         raise HTTPError(400, log_message=msg)
     except RequiredParamMissing as ex:
         msg = _(u"Required parameter ({0:s}) was not given.").format(ex)
-        raise HTTPError(400, log_message=str(msg,'utf-8'))
+        raise HTTPError(400, log_message=str(msg, 'utf-8'))
 
 
 class BrainiakRequestHandler(CorsMixin, RequestHandler):
-
     CORS_ORIGIN = '*'
     CORS_HEADERS = settings.CORS_HEADERS
 
@@ -122,20 +118,20 @@ class BrainiakRequestHandler(CorsMixin, RequestHandler):
         error_message = u"[{0}] on {1}".format(status_code, self._request_summary())
 
         if isinstance(e, NotificationFailure):
-            message = unicode(e)
+            message = str(e)
             logger.error(message)
             self.send_error(status_code, message=message)
 
         elif isinstance(e, HTTPClientError):
-            message = _(u"Access to backend service failed.  {0:s}.").format(str(e,'utf-8'))
-            extra_messages = check_messages_when_port_is_mentioned(str(e,'utf-8'))
+            message = _(u"Access to backend service failed.  {0:s}.").format(str(e, 'utf-8'))
+            extra_messages = check_messages_when_port_is_mentioned(str(e, 'utf-8'))
             if extra_messages:
                 for msg in extra_messages:
                     message += msg
 
             if hasattr(e, "response") and e.response is not None and \
-               hasattr(e.response, "body") and e.response.body is not None:
-                    message += _(u"\nResponse:\n") + str(e.response.body,"utf-8")
+                    hasattr(e.response, "body") and e.response.body is not None:
+                message += _(u"\nResponse:\n") + str(e.response.body, "utf-8")
 
             logger.error(message)
             self.send_error(status_code, message=message)
@@ -221,7 +217,6 @@ class BrainiakRequestHandler(CorsMixin, RequestHandler):
 
 
 class RootJsonSchemaHandler(BrainiakRequestHandler):
-
     SUPPORTED_METHODS = list(BrainiakRequestHandler.SUPPORTED_METHODS) + ["PURGE"]
 
     def get_cache_path(self):
@@ -248,7 +243,6 @@ class RootJsonSchemaHandler(BrainiakRequestHandler):
 
 
 class RootHandler(BrainiakRequestHandler):
-
     SUPPORTED_METHODS = list(BrainiakRequestHandler.SUPPORTED_METHODS) + ["PURGE"]
 
     @greenlet_asynchronous
@@ -321,7 +315,6 @@ class ContextHandler(BrainiakRequestHandler):
 
 
 class ClassHandler(BrainiakRequestHandler):
-
     SUPPORTED_METHODS = list(BrainiakRequestHandler.SUPPORTED_METHODS) + ["PURGE"]
 
     def __init__(self, *args, **kwargs):
@@ -380,7 +373,7 @@ class CollectionHandler(BrainiakRequestHandler):
     @greenlet_asynchronous
     def get(self, context_name, class_name):
         valid_params = LIST_PARAMS + CLASS_PARAMS + \
-            DefaultParamsDict(direct_instances_only='0', inference='0')
+                       DefaultParamsDict(direct_instances_only='0', inference='0')
         with safe_params(valid_params):
             self.query_params = ParamDict(self,
                                           context_name=context_name,
@@ -422,7 +415,7 @@ class CollectionHandler(BrainiakRequestHandler):
         try:
             (instance_uri, instance_id) = create_instance(self.query_params, instance_data)
         except InstanceError as ex:
-            raise HTTPError(500, log_message=unicode(ex))
+            raise HTTPError(500, log_message=str(ex))
 
         instance_url = self.build_resource_url(instance_id)
 
@@ -460,7 +453,8 @@ class CollectionHandler(BrainiakRequestHandler):
                     filter_message.append(u" with o{0}=({1})".format(index, o))
             self.query_params["filter_message"] = "".join(filter_message)
             self.query_params["page"] = int(self.query_params["page"]) + 1  # Showing real page in response
-            msg = _(u"Instances of class ({class_uri}) in graph ({graph_uri}){filter_message}, language=({lang}) and in page=({page}) were not found.")
+            msg = _(
+                u"Instances of class ({class_uri}) in graph ({graph_uri}){filter_message}, language=({lang}) and in page=({page}) were not found.")
 
             response = {
                 "warning": msg.format(**self.query_params),
@@ -477,7 +471,6 @@ class CollectionHandler(BrainiakRequestHandler):
 
 
 class InstanceHandler(BrainiakRequestHandler):
-
     SUPPORTED_METHODS = list(BrainiakRequestHandler.SUPPORTED_METHODS) + ["PURGE"]
 
     def __init__(self, *args, **kwargs):
@@ -615,7 +608,8 @@ class InstanceHandler(BrainiakRequestHandler):
                     msg = _(u"Class {0} doesn't exist in graph {1}.")
                     raise HTTPError(404, log_message=msg.format(self.query_params["class_uri"],
                                                                 self.query_params["graph_uri"]))
-                instance_uri, instance_id = create_instance(self.query_params, instance_data, self.query_params["instance_uri"])
+                instance_uri, instance_id = create_instance(self.query_params, instance_data,
+                                                            self.query_params["instance_uri"])
                 resource_url = self.request.full_url()
                 status = 201
                 self.set_header("location", resource_url)
@@ -624,9 +618,9 @@ class InstanceHandler(BrainiakRequestHandler):
                 edit_instance(self.query_params, instance_data)
                 status = 200
         except InstanceError as ex:
-            raise HTTPError(400, log_message=unicode(ex))
+            raise HTTPError(400, log_message=str(ex))
         except SchemaNotFound as ex:
-            raise HTTPError(404, log_message=unicode(ex))
+            raise HTTPError(404, log_message=str(ex))
 
         cache.purge_an_instance(self.query_params['instance_uri'])
 
@@ -790,7 +784,6 @@ class VirtuosoStatusHandler(BrainiakRequestHandler):
 
 
 class TriplestoreConfigsStatusHandler(BrainiakRequestHandler):
-
     SUPPORTED_METHODS = list(BrainiakRequestHandler.SUPPORTED_METHODS) + ["PURGE"]
 
     def get(self):
@@ -903,14 +896,14 @@ class StoredQueryCRUDHandler(BrainiakRequestHandler):
 
 
 class StoredQueryExecutionHandler(BrainiakRequestHandler):
-
     DEFAULT_TIME_TO_LIVE = 60 * 5  # In seconds (5 minutes)
 
     @greenlet_asynchronous
     def get(self, query_id):
         stored_query = get_stored_query(query_id)
         if stored_query is None:
-            not_found_message = _("The stored query with id '{0}' was not found during execution attempt").format(query_id)
+            not_found_message = _("The stored query with id '{0}' was not found during execution attempt").format(
+                query_id)
             raise HTTPError(404,
                             log_message=not_found_message)
 

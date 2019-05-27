@@ -31,7 +31,7 @@ isql = "isql -U %(user)s -P %(pwd)s -H %(host)s -S %(port)s" %\
 		 "pwd": DATABASE_PASSWORD,
 		 "host": DATABASE_HOST,
 		 "port": DATABASE_PORT}
-isql_cmd = "DB.DBA.TTLP_MT_LOCAL_FILE('%s', '', '%s');" % (REMOTEFILE, GRAPH)
+isql_cmd = "DB.DBA.TTLP('%s', '', '%s');" % (REMOTEFILE, GRAPH)
 cmd = '%s < "%s"' % (isql, isql_cmd)
 
 process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

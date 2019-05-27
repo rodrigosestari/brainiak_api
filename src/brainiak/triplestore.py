@@ -4,18 +4,19 @@ import time
 import urllib
 
 import requests
-from requests.auth import HTTPDigestAuth
 import ujson as json
+from requests.auth import HTTPDigestAuth
 from simplejson import JSONDecodeError
-
-from tornado.httpclient import HTTPRequest
 from tornado.httpclient import HTTPError as ClientHTTPError
+from tornado.httpclient import HTTPRequest
 from tornado.web import HTTPError
 
 from brainiak import log
 from brainiak import settings
 from brainiak.greenlet_tornado import greenlet_fetch
 from brainiak.utils.config_parser import parse_section
+from urllib.parse import urlencode, quote_plus
+
 
 JSON_DECODE_ERROR_MESSAGE = "Could not decode JSON:\n  {0}"
 UNAUTHORIZED_MESSAGE = "Check triplestore user and password."
@@ -77,7 +78,7 @@ def _process_json_triplestore_response(response, async=True):
         Unifying tornado and requests response.
     """
     if async:
-        result_dict = json.loads(unicode(response.body))
+        result_dict = json.loads(str(response.body.decode("utf-8")))
     else:
         try:
             result_dict = response.json()
@@ -97,7 +98,7 @@ def query_sparql(query, triplestore_config, async=True):
 
     response, time_diff = do_run_query(request_params, async)
 
-    log_params["query"] = unicode(query)
+    log_params["query"] = str(query)
     log_params["time_diff"] = time_diff
     log_request(log_params)
     if time_diff >= SLOW_QUERY_TIMEOUT:
@@ -105,6 +106,7 @@ def query_sparql(query, triplestore_config, async=True):
 
     result_dict = _process_json_triplestore_response(response, async)
     return result_dict
+
 
 # This is based on virtuoso_connector app, used by App Semantica, so QA2 Virtuoso Analyser works
 format_post = u"POST - %(url)s - %(user_ip)s - %(auth_username)s [tempo: %(time_diff)s] - QUERY - %(query)s"
@@ -117,11 +119,11 @@ def _build_request_params(query, triplestore_config, async):
         If False, a dict with args for requests.request interface is created.
     """
     body_params = {
-        "query": unicode(query).encode("utf-8"),
+        "query": str(query).encode("utf-8"),
         "format": DEFAULT_RESPONSE_FORMAT
     }
 
-    body_string = urllib.urlencode(body_params)
+    body_string = urlencode(body_params)
     body_dict = {"body": body_string}
 
     request_params = {
@@ -137,8 +139,8 @@ def _build_request_params(query, triplestore_config, async):
             "data": body_params,
             "url": triplestore_config["url"]})
         if "auth_mode" in triplestore_config and \
-           "auth_username" in triplestore_config and  \
-           "auth_password" in triplestore_config:
+                "auth_username" in triplestore_config and \
+                "auth_password" in triplestore_config:
             # Considering all DIGEST authencations
             auth_credentials = HTTPDigestAuth(triplestore_config["auth_username"],
                                               triplestore_config["auth_password"])
@@ -156,7 +158,6 @@ VIRTUOSO_SUCCESS_MESSAGE = u'Virtuoso connection %(type)s | SUCCEED | %(endpoint
 
 
 def status():
-
     endpoint_dict = parse_section()
     unauthorized_endpoint_dict = copy.copy(endpoint_dict)
 

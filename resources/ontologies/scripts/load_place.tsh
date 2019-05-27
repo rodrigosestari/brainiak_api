@@ -1,2 +1,2 @@
-DB.DBA.TTLP_MT_LOCAL_FILE('dumps/data_place.ttl','', 'http://semantica.globo.com/place/');
+DB.DBA.TTLP('dumps/data_place.ttl','', 'http://semantica.globo.com/place/');
 rdfs_rule_set('http://semantica.globo.com/ruleset', 'http://semantica.globo.com/place/');
