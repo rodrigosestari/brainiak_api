@@ -32,7 +32,7 @@ class Application(TornadoApplication):
             flushall()
             super(Application, self).__init__(ROUTES, debug=debug)
         except Exception as e:
-            sys.stdout.write(u"Failed to initialize application. {0}".format(unicode(e)))
+            sys.stdout.write(u"Failed to initialize application. {0}".format(e))
             traceback.print_exc(file=sys.stdout)
             sys.exit(1)
 

@@ -1,4 +1,5 @@
 import re
+
 import stomp
 from stomp.exception import ConnectionClosedException, ConnectFailedException, NotConnectedException
 
@@ -40,8 +41,9 @@ class Middleware(object):
         try:
             self.connection.start()
             self.connection.connect()
-        except (ConnectionClosedException, ConnectFailedException, NotConnectedException, ProtocolException) as e:
-            msg = "ActiveMQ at {0}:{1} reconnection failed with error {2}.".format(self.host, self.port, str(e.__class__))
+        except (ConnectionClosedException, ConnectFailedException, NotConnectedException) as e:
+            msg = "ActiveMQ at {0}:{1} reconnection failed with error {2}.".format(self.host, self.port,
+                                                                                   str(e.__class__))
             raise MiddlewareError(msg)
         return True
 

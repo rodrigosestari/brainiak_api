@@ -181,7 +181,7 @@ def normalize_uri(uri, mode, shorten_uri_function=shorten_uri, context=None):
 
 
 def normalize_all_uris_recursively(instance, mode=EXPAND, context=_MAP_SLUG_TO_PREFIX):
-    if isinstance(instance, basestring):
+    if isinstance(instance, str):
         try:
             response = normalize_uri(instance, mode, context=context)
         except PrefixError:

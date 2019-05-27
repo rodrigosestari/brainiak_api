@@ -7,7 +7,7 @@ requests==2.22.0
 simplejson==3.16.0
 stomp.py==4.1.22
 supervisor==4.0.3
-tornado==6.0.2
+tornado==4.5.3
 tornado-cors==0.6.0
 ujson==1.35
 jsonschema==3.0.1
