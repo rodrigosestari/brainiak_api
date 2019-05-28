@@ -6,7 +6,7 @@ DEBUG = False
 REDIS_ENDPOINT = 'localhost'
 REDIS_PORT = 6379
 
-TRIPLESTORE_CONFIG_FILEPATH = 'src/brainiak/triplestore.ini'
+TRIPLESTORE_CONFIG_FILEPATH = '/Users/sestari/Documents/brainiak_api/src/brainiak/triplestore.ini'
 TRIPLESTORE_QUERY_TIMEOUT = 1.0
 
 ELASTICSEARCH_ENDPOINT = 'localhost:9200'
@@ -25,7 +25,7 @@ URI_PREFIX = "http://semantica.globo.com/"
 
 EVENT_BUS_HOST = 'localhost'
 EVENT_BUS_PORT = 61613
-NOTIFY_BUS = True
+NOTIFY_BUS = False
 
 DEFAULT_RULESET_URI = "http://semantica.globo.com/ruleset"
 
