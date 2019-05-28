@@ -13,7 +13,7 @@ def create_instance(query_params, instance_data, instance_uri=None):
     graph_uri = query_params["graph_uri"]
 
     if not are_there_label_properties_in(instance_data):
-        raise HTTPError(400, log_message=_(u"Label properties like rdfs:label or its subproperties are required"))
+        raise HTTPError(400, log_message=_("Label properties like rdfs:label or its subproperties are required"))
 
     if not instance_uri:
         instance_uri = create_instance_uri(class_uri)
@@ -23,7 +23,7 @@ def create_instance(query_params, instance_data, instance_uri=None):
     try:
         triples = create_explicit_triples(instance_uri, instance_data, class_object, graph_uri, query_params)
     except InstanceError as exception:
-        raise HTTPError(400, log_message=exception.message)
+        raise HTTPError(400, log_message=exception.args)
 
     implicit_triples = create_implicit_triples(instance_uri, class_uri)
     triples.extend(implicit_triples)

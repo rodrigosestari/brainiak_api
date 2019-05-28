@@ -62,7 +62,7 @@ def calculate_offset(query_params):
     "Calculate offset for paginated queries given page and per_page parameters"
     page = int(query_params.get("page", settings.DEFAULT_PAGE))
     per_page = int(query_params.get("per_page", settings.DEFAULT_PER_PAGE))
-    return unicode(page * per_page)
+    return str(page * per_page)
 
 
 def decorate_dict_with_pagination(target_dict, params, get_total_items_func):
@@ -88,7 +88,7 @@ def decorate_with_resource_id(list_of_dicts):
                 resource_id = id_key.rsplit("/")[-2]
             else:
                 resource_id = id_key.rsplit("/")[-1]
-            dict_item['resource_id'] = unicode(resource_id)
+            dict_item['resource_id'] = str(resource_id)
         except KeyError as ex:
             raise TypeError(u"dict missing key {0:s} while processing decorate_with_resource_id()".format(ex))
 
@@ -122,7 +122,7 @@ def compress_duplicated_ids(list_of_dicts):
         ids = list(set(a_dict["@id"] for a_dict in list_of_dicts))
         compressed_list = []
         for id in ids:
-            dicts_with_same_id = filter(lambda a_dict: a_dict["@id"] == id, list_of_dicts)
+            dicts_with_same_id = list(filter(lambda a_dict: a_dict["@id"] == id, list_of_dicts))
             compressed_dict = dict((key, list(set([d[key] for d in dicts_with_same_id]))) for key in dicts_with_same_id[0])
             # transforming lists with 1 element into a non-list, e.g. a string
             compressed_dict = dict((key, value[0] if len(value) == 1 else value) for key, value in compressed_dict.items())

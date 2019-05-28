@@ -105,10 +105,10 @@ def uri_to_slug(uri):
 def extract_prefix(uri):
     prefixes = _MAP_PREFIX_TO_SLUG.keys()
     # FIXME: Optmize way the two operations below
-    prefixes.sort()
+    prefixes = sorted(prefixes)
     prefixes.reverse()
     # Inspired by code from Vaughn Cato
-    uri_prefix = filter(uri.startswith, prefixes + [''])[0]
+    uri_prefix = list(filter(uri.startswith, prefixes + ['']))[0]
     return uri_prefix
 
 

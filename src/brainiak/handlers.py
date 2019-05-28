@@ -124,8 +124,8 @@ class BrainiakRequestHandler(CorsMixin, RequestHandler):
             self.send_error(status_code, message=message)
 
         elif isinstance(e, HTTPClientError):
-            message = _(u"Access to backend service failed.  {0:s}.").format(str(e, 'utf-8'))
-            extra_messages = check_messages_when_port_is_mentioned(str(e, 'utf-8'))
+            message = _("Access to backend service failed.  {0:s}.").format(str(e))
+            extra_messages = check_messages_when_port_is_mentioned(str(e))
             if extra_messages:
                 for msg in extra_messages:
                     message += msg

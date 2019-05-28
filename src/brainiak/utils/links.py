@@ -76,7 +76,7 @@ def split_into_chunks(items, chunk_size):
 
     Useful for pagination.
     """
-    chunks = [items[index: index + chunk_size] for index in xrange(0, len(items), chunk_size)]
+    chunks = [items[index: index + chunk_size] for index in range(0, len(items), chunk_size)]
     return chunks
 
 
