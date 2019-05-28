@@ -1,2 +1,2 @@
-DB.DBA.TTLP('dumps/data_person.ttl','', 'http://semantica.globo.com/person/');
+DB.DBA.TTLP_MT(file_to_string_output('/Users/sestari/Documents/brainiak_api/resources/ontologies/schema/data_person.ttl'), '', 'http://semantica.globo.com/person/');
 rdfs_rule_set('http://semantica.globo.com/ruleset', 'http://semantica.globo.com/person/');

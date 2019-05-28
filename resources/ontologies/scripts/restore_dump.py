@@ -17,7 +17,7 @@ template = """
 SPARQL DROP SILENT GRAPH <%(graph)s/>;
 SPARQL CREATE GRAPH <%(graph)s/>;
 rdfs_rule_set('http://semantica.globo.com/ruleset', '%(graph)s');
-DB.DBA.TTLP_MT_LOCAL_FILE('%(ttl_file)s', '', '%(graph)s/');
+DB.DBA.TTLP_MT('%(ttl_file)s', '', '%(graph)s/');
 
 """
 
