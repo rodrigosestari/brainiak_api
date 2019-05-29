@@ -23,7 +23,7 @@ def create_instance(query_params, instance_data, instance_uri=None):
     try:
         triples = create_explicit_triples(instance_uri, instance_data, class_object, graph_uri, query_params)
     except InstanceError as exception:
-        raise HTTPError(400, log_message=exception.args)
+        raise HTTPError(400, log_message=str(exception.args))
 
     implicit_triples = create_implicit_triples(instance_uri, class_uri)
     triples.extend(implicit_triples)
