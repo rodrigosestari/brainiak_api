@@ -80,7 +80,7 @@ def safe_params(valid_params=None, body_params=None):
         raise HTTPError(400, log_message=msg)
     except RequiredParamMissing as ex:
         msg = _(u"Required parameter ({0:s}) was not given.").format(ex)
-        raise HTTPError(400, log_message=str(msg, 'utf-8'))
+        raise HTTPError(400, log_message=str(msg))
 
 
 class BrainiakRequestHandler(CorsMixin, RequestHandler):
