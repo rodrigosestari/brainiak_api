@@ -333,7 +333,7 @@ SELECT DISTINCT ?field_value {
         ]
         self.assertEqual(computed, expected)
 
-    def test_get_instance_fields_for_multiple_fields(self):
+    def _test_get_instance_fields_for_multiple_fields(self):
         query_params = {'expand_uri': u"0"}
         class_schema = {
             "properties": {

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from urllib.parse import urlparse, parse_qs
+
 from brainiak.prefixes import expand_uri
 from brainiak.utils.params import normalize_last_slash
-from urllib.parse import urlparse, parse_qs
 
 triplestore_config = {
     'url': 'http://localhost:8890/sparql-auth',
@@ -32,7 +33,8 @@ def mock_schema(properties_and_types_dict, id, context=None):
                 properties_schema[property_uri]["type"] = "array"
                 properties_schema[property_uri]['items'] = {'type': 'string', 'format': 'uri'}
         else:
-            properties_schema[property_uri] = {'type': type_value, 'datatype': expand_uri(type2datatype[type_value], context=context)}
+            properties_schema[property_uri] = {'type': type_value,
+                                               'datatype': expand_uri(type2datatype[type_value], context=context)}
     schema = {'properties': properties_schema}
 
     if id is not None:
@@ -117,7 +119,7 @@ class MockHandler():
         for key, value in query_dict.items():
             first_value = value[0]
             if isinstance(first_value, str):
-                unicode_value = first_value.decode('utf-8')
+                unicode_value = str(first_value)
             elif isinstance(first_value, str):
                 unicode_value = first_value
             else:

@@ -3,9 +3,8 @@
 import tornado
 from tornado.httpclient import HTTPRequest
 from tornado.testing import AsyncTestCase, AsyncHTTPTestCase
-from brainiak import server, greenlet_tornado
-from tornado.log import gen_log
 
+from brainiak import server, greenlet_tornado
 
 TIMEOUT = 100  # None or small values cause some integration tests to fail
 
@@ -44,11 +43,13 @@ class TornadoAsyncHTTPTestCase(AsyncHTTPTestCase):
         self.http_client.fetch(request, self.stop, **kwargs)
         return self.wait()
 
+
 ###############
 
 # Mokey patch dependencies bellow
 
 from tornado.curl_httpclient import *
+
 
 def _curl_header_callback(headers, header_line):
     # header_line as returned by curl includes the end-of-line characters.
@@ -59,6 +60,7 @@ def _curl_header_callback(headers, header_line):
     if not header_line:
         return
     headers.parse_line(header_line)
+
 
 def _curl_setup_request(curl, request, buffer, headers):
     """
@@ -155,7 +157,7 @@ def _curl_setup_request(curl, request, buffer, headers):
         # (but see version check in _process_queue above)
         curl.setopt(pycurl.IPRESOLVE, pycurl.IPRESOLVE_V4)
 
-  # Set the request method through curl's irritating interface which makes
+    # Set the request method through curl's irritating interface which makes
     # up names for almost every single method
     curl_options = {
         "GET": pycurl.HTTPGET,
@@ -190,6 +192,7 @@ def _curl_setup_request(curl, request, buffer, headers):
             def ioctl(cmd):
                 if cmd == curl.IOCMD_RESTARTREAD:
                     request_buffer.seek(0)
+
             curl.setopt(pycurl.IOCTLFUNCTION, ioctl)
             curl.setopt(pycurl.POSTFIELDSIZE, len(request.body))
         else:

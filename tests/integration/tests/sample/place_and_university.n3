@@ -1,0 +1,61 @@
+@prefix : <http://example.onto/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+
+# http://example.onto/Place
+:Place a owl:Class ;
+       rdfs:label "Lugar"@pt ;
+       rdfs:label "Place"@en ;
+       rdfs:comment "Search in the dictionary."@en ;
+       rdfs:comment "Procure no dicionario."@pt .
+
+# http://example.onto/PlaceWithoutLanguage
+:PlaceWithoutLanguage a owl:Class ;
+       rdfs:label "Place" ;
+       rdfs:comment "Search in the dictionary." .
+
+# http://example.onto/Lugar
+:Lugar a owl:Class ;
+       rdfs:label "Lugar" .
+
+:City a owl:Class ;
+      rdfs:label "Cidade" ;
+      rdfs:subClassOf :Place .
+
+:State a owl:Class ;
+       rdfs:label "Estado" ;
+       rdfs:subClassOf :Place .
+
+:Country a owl:Class ;
+         rdfs:label "País" ;
+         rdfs:subClassOf :Place .
+
+:partOfCountry a owl:ObjectProperty ;
+               rdfs:label "Faz parte do país" ;
+               rdfs:domain [
+                             a owl:Class ;
+                             owl:unionOf (:State :City)
+                           ] ;
+               rdfs:range :Country ;
+               rdfs:comment "Estado está no país." .
+
+:isBasedIn a owl:ObjectProperty ;
+           rdfs:label "is based in" ;
+           rdfs:domain :ResearchGroup ;
+           rdfs:range [
+                         a owl:Class ;
+                         owl:unionOf (:University :Institute)
+                      ] .
+
+# http://test.onto/ResearchGroup
+:ResearchGroup a owl:Class ;
+               rdfs:label "Research Group".
+
+# http://test.onto/University
+:University a owl:Class ;
+            rdfs:label "University".
+
+# http://test.onto/Institute
+:Institute a owl:Class ;
+           rdfs:label "Institute".

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import json
-import urllib.parse
+
+
+import urllib
 
 import requests
 from estester import ElasticSearchQueryTestCase
@@ -35,8 +37,8 @@ class SuggestIntegrationTestCase(TornadoAsyncHTTPTestCase, QueryTestCase):
         super(SuggestIntegrationTestCase, self).setUp()
         # ONLY VALID FOR VALID_BODY_PARAMS
         self.elastic_request_url = "http://" + settings.ELASTICSEARCH_ENDPOINT + "/semantica.example.onto/"
-        self.elastic_request_url += quote_plus("http://example.onto/City") + "/"
-        self.elastic_request_url += quote_plus("http://example.onto/York")
+        self.elastic_request_url += urllib.parse.quote_plus("http://example.onto/City") + "/"
+        self.elastic_request_url += urllib.parse.quote_plus("http://example.onto/York")
         entry = {
             "http://www.w3.org/2000/01/rdf-schema#label": "York",
             "http://example.onto/nickname": "City of York",

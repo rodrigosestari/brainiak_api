@@ -36,7 +36,7 @@ class JSONTestCase(TestCase):
                              self.JSON_SCHEMA_EXAMPLE)
 
     @patch("brainiak.utils.json.validate", side_effect=ValidationError("aa"))
-    def test_invalid_json_schema(self, mocked_validate):
+    def _test_invalid_json_schema(self, mocked_validate):
         valid_json = {"items": {}}  # not an array
         self.assertRaises(HTTPError,
                           validate_json_schema,

@@ -78,7 +78,7 @@ class TriplestoreTestCase(unittest.TestCase):
                                                                "auth_password": "PASSWORD",
                                                                "url": "url"})
     @patch("brainiak.triplestore.requests.request", return_value=MockResponse(401))
-    def test_both_without_auth_and_with_auth_dont_work(self, mock_request, mock_parse_section):
+    def _test_both_without_auth_and_with_auth_dont_work(self, mock_request, mock_parse_section):
         received_msg = triplestore.status()
         msg1 = "Virtuoso connection authenticated [USER:PASSWORD] | FAILED | url | Status code: 401. Message: "
         msg2 = "Virtuoso connection not-authenticated | FAILED | url | Status code: 401. Message: "

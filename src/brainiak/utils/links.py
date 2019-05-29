@@ -256,6 +256,10 @@ def add_link(link_list, rel, href, method='GET', **kw):
     link_list.append(link)
 
 
+def sortListDict(lista):
+    return list(map(lambda d: sorted(d.items(), key=lambda kv: (kv[1], kv[0])), lista))
+
+
 # def collection_links(query_params):
 #     link_params = {}
 #     link_params['base_url'] = remove_last_slash(query_params.base_url)

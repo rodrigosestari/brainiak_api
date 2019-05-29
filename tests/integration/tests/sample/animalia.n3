@@ -1,0 +1,249 @@
+@prefix : <http://example.onto/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+##########################################
+# ObjectProperties
+##########################################
+
+# http://example.onto/gender
+:gender rdf:type owl:ObjectProperty ;
+    rdfs:label "Gender" ;
+    rdfs:domain :Animal ;
+    rdfs:range :Gender .
+
+# http://example.onto/furColour
+:furColour rdf:type owl:ObjectProperty ;
+    rdfs:label "Fur or hair colour" ;
+    rdfs:domain :Mammalia ;
+    rdfs:range :FurColour .
+
+# http://example.onto/furLenght
+:furLenght rdf:type owl:ObjectProperty ;
+    rdfs:label "Fur or hair lenght" ;
+    rdfs:domain :Canidae ;
+    rdfs:range :FurLenght .
+
+# http://example.onto/birthPlace
+:birthPlace a owl:ObjectProperty ;
+             rdfs:label "Birth place of first known member of Species";
+             rdfs:domain :Animal ;
+             rdfs:range :Place .
+
+# http://example.onto/cityOfBirth
+:birthCity a owl:ObjectProperty ;
+             rdfs:subPropertyOf :birthPlace ;
+             rdfs:label "Birth city of first known member of Species" ;
+             rdfs:domain :Yorkshire_Terrier ;
+             rdfs:range :City .
+
+# http://example.onto/hasChild
+:hasChild a owl:ObjectProperty ;
+          rdfs:label "Has child (son or daughter)" ;
+          rdfs:domain :Human ;
+          rdfs:range :Human ,
+                     :Cat.
+
+# http://example.onto/hasParent
+:hasParent a owl:ObjectProperty ;
+           rdfs:label "Has parent (mother or father)" ;
+           rdfs:domain :Human ;
+           rdfs:range :Human .
+
+##########################################
+# DatatypeProperties
+##########################################
+
+
+# http://example.onto/canFlight
+:canFlight a owl:DatatypeProperty ;
+           rdfs:label "Can flight"@en;
+           rdfs:comment "Defines if the bird species can flight or not."@en ;
+           rdfs:domain :Bird ;
+           rdfs:range xsd:string .
+
+# http://example.onto/name
+:name a owl:DatatypeProperty ;
+           rdfs:subPropertyOf  rdfs:label ;
+           rdfs:label "Upper name"@en;
+           rdfs:comment "Name of the instance."@en ;
+           rdfs:domain owl:Thing ;
+           rdfs:range xsd:string .
+
+:nickname a owl:DatatypeProperty ;
+          rdfs:label "Nickname of a place" ;
+          rdfs:domain :Place ;
+          rdfs:range xsd:string .
+
+:description a owl:DatatypeProperty ;
+             rdfs:label "Description of a place" ;
+             rdfs:domain :Place ,
+                         :Canidae ;
+             rdfs:range xsd:string .
+
+
+#######################
+# Annotation Properties
+#######################
+
+:suggestMetaField a owl:AnnotationProperty .
+
+##########################################
+# Classes
+##########################################
+
+
+# http://example.onto/Place
+:Place a owl:Class ;
+       rdfs:label "Place" .
+
+# http://example.onto/City
+:City a owl:Class ;
+      rdfs:subClassOf :Place ;
+      rdfs:label "City" ;
+      :suggestMetaField "http://example.onto/nickname, http://example.onto/description" .
+
+# http://example.onto/Gender
+:Gender a owl:Class .
+
+# http://example.onto/Species
+:Species a owl:Class .
+
+# http://example.onto/FurColour
+:FurColour a owl:Class .
+
+# http://example.onto/FurLenght
+:FurLenght a owl:Class .
+
+# http://example.onto/Animal
+:Animal a owl:Class;
+    rdfs:label "Animal"@pt;
+    rdfs:label "Animal"@en;
+    rdfs:subClassOf :Species ,
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :gender ;
+          owl:allValuesFrom [
+            owl:oneOf (:Male :Female :Transgender) 
+          ]
+        ] ,
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :gender ;
+          owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+          owl:allValuesFrom :Gender
+        ] ,
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :gender ;
+          owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+          owl:allValuesFrom :Gender
+        ] ;
+    :cellStructure "Eukaryotes" ;
+    :carbonAcquisition "Heterotroph" .
+
+
+# http://example.onto/SubAnimal
+:SubAnimal a owl:Class;
+    rdfs:subClassOf :Animal ,
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :furStyle ;
+          owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+          owl:allValuesFrom xsd:string ,
+              :FurLenght ,
+              :FurColour
+        ] .
+
+# http://example.onto/Birds
+:Birds a owl:Class;
+    rdfs:subClassOf :Animal .
+
+# http://example.onto/Mammalia
+:Mammalia a owl:Class;
+    rdfs:subClassOf :Animal ,
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :furColour ;
+          owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+          owl:allValuesFrom :FurColour
+        ] ;
+    :vertebraType "Vertebrate" ;
+    :temperatureManagement "Endothermy" .
+
+# http://example.onto/Cat
+:Cat a owl:Class;
+     rdfs:subClassOf :Mammalia ;
+     rdfs:label "Feline" ;
+     :motionStyle :Quadruped .
+
+# http://example.onto/Canidae
+:Canidae a owl:Class;
+     rdfs:subClassOf :Mammalia ,
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :furLenght ;
+          owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+          owl:allValuesFrom :FurLenght
+        ] ,
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :furLenght ;
+          owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+          owl:allValuesFrom :FurLenght
+        ] ;
+     :motionStyle :Quadruped .
+
+# http://example.onto/Yorkshire_Terrier
+:Yorkshire_Terrier a owl:Class ;
+    rdfs:label "Yorkshire Terrier" ;
+    rdfs:subClassOf :Canidae .
+
+# http://example.onto/Human
+:Human a owl:Class ;
+     rdfs:subClassOf :Mammalia ,
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :hasChild ;
+          owl:maxQualifiedCardinality "888"^^xsd:nonNegativeInteger ;
+          owl:allValuesFrom :Human
+        ] ,
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :hasParent ;
+          owl:maxQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+          owl:allValuesFrom :Human
+        ] ;
+     rdfs:label "Humano"@pt .
+
+##########################################
+# Instances
+##########################################
+
+:York a :City ;
+      rdfs:label "York" ;
+      :nickname "City of York" ;
+      :description "York is a walled city, situated at the confluence of the Rivers Ouse and Foss in North Yorkshire, England." .
+
+:DuplicatedYork a :City ;
+                :nickname "City of York" .
+
+:Male a :Gender ;
+      rdfs:label "Male" .
+:Female a :Gender .
+:Transgender a :Gender .
+
+:Black a :FurColour .
+:White a :FurColour .
+:Brown a :FurColour .
+:Blonde a :FurColour ;
+        rdfs:label "Yellow" .
+
+:Short a :FurLenght .
+:Medium a :FurLenght .
+:Long a :FurLenght .
+
+:Nina a :Yorkshire_Terrier ;
+     :birthCity :York ;
+     rdfs:label "Nina Fox" .
+
+
+:Naruto a :Cat ;
+        rdfs:label "Naruto Senra" .
+:Chloe a :Cat .
+
+:RodrigoSenra a :Human ;
+              :hasChild :Naruto ;
+              :furColour :Blonde ;
+              :gender :Male .

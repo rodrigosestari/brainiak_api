@@ -56,7 +56,7 @@ graph = rdflib.Graph()
 
 ISQL = "isql"
 ISQL_CMD = 'echo "%s" | %s'
-ISQL_UP = "DB.DBA.TTLP_MT_LOCAL_FILE('%(ttl)s', '', '%(graph)s');"
+ISQL_UP = "DB.DBA.TTLP_MT(file_to_string_output('%(ttl)s'), '', '%(graph)s');"
 ISQL_DOWN = "SPARQL CLEAR GRAPH <%(graph)s>;"
 ISQL_DROP = "SPARQL DROP GRAPH <%(graph)s>;"
 

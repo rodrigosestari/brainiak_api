@@ -1,6 +1,5 @@
+import importlib
 import logging
-import unittest
-import sys
 import unittest
 
 from brainiak import log
@@ -11,7 +10,7 @@ LOG_FORMAT = "%(asctime)s - %(filename)s:%(lineno)d - %(name)s - %(levelname)s -
 class LogTestCase(unittest.TestCase):
 
     def setUp(self):
-        reload(log)
+        importlib.reload(log)
 
     def test_initial_attributes_values(self):
         self.assertEqual(log.handlers, [])

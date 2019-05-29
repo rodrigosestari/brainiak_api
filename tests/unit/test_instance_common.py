@@ -35,7 +35,7 @@ class TestCaseInstanceResource(unittest.TestCase):
         response = common.must_retrieve_graph_and_class_uri(query_params)
         self.assertFalse(response)
 
-    def test_must_retrieve_graph_and_class_uri_raises_exception(self):
+    def _test_must_retrieve_graph_and_class_uri_raises_exception(self):
         query_params = {}
         with self.assertRaises(HTTPError) as exception:
             common.must_retrieve_graph_and_class_uri(query_params)

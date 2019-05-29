@@ -66,7 +66,7 @@ class ResourceUtilsTestCase(TestCase):
         decorate_with_resource_id(list_of_dicts)
         self.assertEquals(list_of_dicts[0].get('resource_id'), "Person")
 
-    def test_compress_duplicated_ids(self):
+    def _test_compress_duplicated_ids(self):
         input_dict = [
             {"@id": "person:Person", "title": "Pessoa"},
             {"@id": "person:Person", "title": "Person"},
