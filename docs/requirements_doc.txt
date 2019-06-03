@@ -1,5 +1,4 @@
 # same version readthedocs uses
-sphinx==1.2.2
-sphinx-rtd-theme==0.1.6
-
-semantic_web_pygments==0.1.0
+sphinx==2.0.1
+sphinx-rtd-theme==0.4.3
+semantic-web-pygments==0.1.0

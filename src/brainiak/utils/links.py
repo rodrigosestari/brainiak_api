@@ -1,6 +1,5 @@
-from urlparse import parse_qs, urlsplit, urlunsplit
 from math import ceil
-from urllib import urlencode, unquote
+from urllib.parse import unquote, parse_qs, urlencode, urlunsplit, urlsplit
 
 
 def split_prefix_and_id_from_uri(url):
@@ -77,7 +76,7 @@ def split_into_chunks(items, chunk_size):
 
     Useful for pagination.
     """
-    chunks = [items[index: index + chunk_size] for index in xrange(0, len(items), chunk_size)]
+    chunks = [items[index: index + chunk_size] for index in range(0, len(items), chunk_size)]
     return chunks
 
 
@@ -255,6 +254,10 @@ def add_link(link_list, rel, href, method='GET', **kw):
     link = {'rel': rel, 'method': method, 'href': href}
     link.update(kw)
     link_list.append(link)
+
+
+def sortListDict(lista):
+    return list(map(lambda d: sorted(d.items(), key=lambda kv: (kv[1], kv[0])), lista))
 
 
 # def collection_links(query_params):

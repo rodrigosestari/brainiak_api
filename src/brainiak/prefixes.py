@@ -105,10 +105,10 @@ def uri_to_slug(uri):
 def extract_prefix(uri):
     prefixes = _MAP_PREFIX_TO_SLUG.keys()
     # FIXME: Optmize way the two operations below
-    prefixes.sort()
+    prefixes = sorted(prefixes)
     prefixes.reverse()
     # Inspired by code from Vaughn Cato
-    uri_prefix = filter(uri.startswith, prefixes + [''])[0]
+    uri_prefix = list(filter(uri.startswith, prefixes + ['']))[0]
     return uri_prefix
 
 
@@ -129,14 +129,14 @@ def shorten_uri(uri):
 
 
 def is_uri(something):
-    if (something is not None) and (isinstance(something, basestring)) and \
+    if (something is not None) and (isinstance(something, str)) and \
        (something.startswith("http://") or something.startswith("https://")):
             return True
     return False
 
 
 def is_compressed_uri(candidate, extra_prefixes=None):
-    if not isinstance(candidate, basestring) or is_uri(candidate):
+    if not isinstance(candidate, str) or is_uri(candidate):
         return False
     try:
         slug, item_ = candidate.split(":")
@@ -181,7 +181,7 @@ def normalize_uri(uri, mode, shorten_uri_function=shorten_uri, context=None):
 
 
 def normalize_all_uris_recursively(instance, mode=EXPAND, context=_MAP_SLUG_TO_PREFIX):
-    if isinstance(instance, basestring):
+    if isinstance(instance, str):
         try:
             response = normalize_uri(instance, mode, context=context)
         except PrefixError:

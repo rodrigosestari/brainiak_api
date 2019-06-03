@@ -2,15 +2,14 @@ import json
 import time
 import urllib
 
-from tornado.httpclient import HTTPRequest
 from tornado.httpclient import HTTPError as ClientHTTPError
+from tornado.httpclient import HTTPRequest
 
 from brainiak import log
 from brainiak.greenlet_tornado import greenlet_fetch
 from brainiak.settings import ELASTICSEARCH_ENDPOINT
 
-
-REQUEST_LOG_FORMAT = u"ELASTICSEARCH - {method} - {url} - {status} - [time: {time_diff}] - REQUEST BODY - {request_body} - RESPONSE BODY - {response_body}"
+REQUEST_LOG_FORMAT = "ELASTICSEARCH - {method} - {url} - {status} - [time: {time_diff}] - REQUEST BODY - {request_body} - RESPONSE BODY - {response_body}"
 
 
 class ElasticSearchException(Exception):
@@ -21,10 +20,10 @@ def run_search(body, indexes=None):
     request_url = _build_elasticsearch_request_url(indexes)
 
     request_params = {
-        "url": unicode(request_url),
+        "url": str(request_url),
         "method": "POST",
         "headers": {u"Content-Type": u"application/x-www-form-urlencoded"},
-        "body": unicode(json.dumps(body))
+        "body": str(json.dumps(body), 'utf-8')
     }
 
     response = _get_response(request_params)
@@ -49,7 +48,7 @@ def _build_elasticsearch_request_url(indexes):
 def run_analyze(target):
     request_url = _build_elasticsearch_analyze_url(target)
     request_params = {
-        "url": unicode(request_url),
+        "url": str(request_url),
         "method": "GET",
         "headers": {u"Content-Type": u"application/x-www-form-urlencoded"},
     }
@@ -59,7 +58,7 @@ def run_analyze(target):
 
 
 def _build_elasticsearch_analyze_url(target):
-    if isinstance(target, unicode):
+    if isinstance(target, str):
         target = urllib.quote_plus(target.encode('utf-8'))
     else:
         target = urllib.quote_plus(target)
@@ -73,9 +72,9 @@ def save_instance(entry, index_name, type_name, instance_id):
         ELASTICSEARCH_ENDPOINT, index_name, type_name, instance_id)
 
     request_params = {
-        "url": unicode(request_url),
+        "url": str(request_url),
         "method": "PUT",
-        "body": unicode(json.dumps(entry))
+        "body": str(json.dumps(entry), 'utf-8')
     }
 
     response = _get_response(request_params)
@@ -88,7 +87,7 @@ def get_instance(index_name, type_name, instance_id):
         ELASTICSEARCH_ENDPOINT, index_name, type_name, instance_id)
 
     request_params = {
-        "url": unicode(request_url),
+        "url": str(request_url),
         "method": "GET"
     }
 
@@ -110,9 +109,9 @@ def get_all_instances_from_type(index_name, type_name, offset, per_page):
     }
 
     request_params = {
-        "url": unicode(request_url),
+        "url": str(request_url),
         "method": "POST",
-        "body": unicode(json.dumps(request_body))
+        "body": str(json.dumps(request_body))
     }
 
     response = _get_response(request_params)
@@ -127,7 +126,7 @@ def delete_instance(index_name, type_name, instance_id):
         ELASTICSEARCH_ENDPOINT, index_name, type_name, instance_id)
 
     request_params = {
-        "url": unicode(request_url),
+        "url": str(request_url),
         "method": "DELETE",
         "allow_nonstandard_methods": True
     }

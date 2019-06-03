@@ -23,7 +23,7 @@ function map {
 
 function load {
     cp_ttl ../data/ data_$1.ttl 
-    echo "DB.DBA.TTLP_MT_LOCAL_FILE('dumps/data_$1.ttl','', 'http://semantica.globo.com/$1/');" > load_$1.tsh
+    echo "DB.DBA.TTLP('dumps/data_$1.ttl','', 'http://semantica.globo.com/$1/');" > load_$1.tsh
     echo "rdfs_rule_set('http://semantica.globo.com/ruleset', 'http://semantica.globo.com/$1/');" >> load_$1.tsh
     chmod a+rwx load_$1.tsh
     time ./run_isql.sh load_$1.tsh

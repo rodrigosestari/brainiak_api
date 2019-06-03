@@ -3,9 +3,9 @@ from tornado.web import HTTPError
 from brainiak.prefixes import normalize_uri, EXPAND
 
 
-MISSING_REQUIRED_PATCH_KEY = u"Incorrect patch item. Every object in the list must contain the following keys: [op, path]"
-MISSING_VALUE_KEY = u"Objects in 'replace' or 'add' operations must have a 'value' entry"
-UNSUPPORTED_OPERATION = u"Unsupported value in 'op': Supported operations are [add, replace, remove]"
+MISSING_REQUIRED_PATCH_KEY = "Incorrect patch item. Every object in the list must contain the following keys: [op, path]"
+MISSING_VALUE_KEY = "Objects in 'replace' or 'add' operations must have a 'value' entry"
+UNSUPPORTED_OPERATION = "Unsupported value in 'op': Supported operations are [add, replace, remove]"
 
 
 def apply_patch(instance_data, patch_list):

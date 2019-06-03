@@ -77,7 +77,7 @@ def is_url(term):
 
 
 def has_lang(literal):
-    if isinstance(literal, basestring):
+    if isinstance(literal, str):
         return literal[-3:].startswith("@")
     return False
 
@@ -268,7 +268,7 @@ def some_triples_deleted(result_dict, graph_uri):
     try:
         query_result_message = result_dict['results']['bindings'][0]['callret-0']['value']
     except:
-        raise UnexpectedResultException(u"Unknown result format: " + unicode(result_dict))
+        raise UnexpectedResultException(u"Unknown result format: " + str(result_dict))
     delete_successful_message = u"Delete from <%s>, ([0-9]*) \(or less\) triples -- done" % graph_uri
     not_found_message = u"0 triples -- nothing to do"
 
@@ -277,7 +277,7 @@ def some_triples_deleted(result_dict, graph_uri):
     elif re.search(not_found_message, query_result_message):
         return False
     else:
-        raise UnexpectedResultException("Unknown result format: " + unicode(result_dict))
+        raise UnexpectedResultException("Unknown result format: " + str(result_dict))
 
 
 def is_result_true(result_dict):
@@ -390,8 +390,6 @@ def is_multiline_string(value):
 
     Example:
 
-    >>> is_multiline_string("testing\nfeature")
-    ... True
     """
     return re.search(MULTI_LINE_PATTERN, value) is not None
 
@@ -518,7 +516,7 @@ def create_explicit_triples(instance_uri, instance_data, class_object, graph_uri
 
     triples = []
     errors = []
-    template_msg = _(u'Incorrect value for property ({1}). A value compatible with a ({2}) was expected, but ({0}) was given.')
+    template_msg = _('Incorrect value for property ({1}). A value compatible with a ({2}) was expected, but ({0}) was given.')
 
     for (predicate_uri, object_value) in predicate_object_tuples:
 
@@ -527,7 +525,7 @@ def create_explicit_triples(instance_uri, instance_data, class_object, graph_uri
             try:
                 predicate_datatype = get_predicate_datatype(class_object, predicate_uri)
             except KeyError:
-                template = _(u'Inexistent property ({0}) in the schema ({1}), used to create instance ({2})')
+                template = _('Inexistent property ({0}) in the schema ({1}), used to create instance ({2})')
                 msg = template.format(predicate_uri, class_id, instance_uri)
                 errors.append(msg)
                 predicate_datatype = None
@@ -557,12 +555,12 @@ def create_explicit_triples(instance_uri, instance_data, class_object, graph_uri
             if not predicate_has_error:
                 if property_must_map_a_unique_value(class_object, predicate_uri):
                     if is_value_already_used(instance_uri, object_, predicate_uri, class_object, graph_uri, query_params):
-                        template = _(u"The property ({0}) defined in the schema ({1}) must map a unique value. The value provided ({2}) is already used by another instance.")
+                        template = _("The property ({0}) defined in the schema ({1}) must map a unique value. The value provided ({2}) is already used by another instance.")
                         msg = template.format(predicate_uri, class_id, object_value)
                         errors.append(msg)
 
     undefined_obligatory_properties = find_undefined_obligatory_properties(class_object, instance_data)
-    template = _(u"The property ({0}) is obligatory according to the definition of the class ({1}). A value must be provided for this field in order to create or edit ({2}).")
+    template = _("The property ({0}) is obligatory according to the definition of the class ({1}). A value must be provided for this field in order to create or edit ({2}).")
     for property_ in undefined_obligatory_properties:
         msg = template.format(property_, class_id, instance_uri)
         errors.append(msg)
@@ -580,7 +578,7 @@ ESCAPED_QUOTES = {
 
 
 def escape_quotes(object_value):
-    if isinstance(object_value, basestring):
+    if isinstance(object_value, str):
         escaped_value = object_value
         for char in ESCAPED_QUOTES:
             escaped_value = escaped_value.replace(char, ESCAPED_QUOTES[char])

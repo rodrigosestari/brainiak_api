@@ -2,7 +2,7 @@ import unittest
 
 import redis
 import requests
-from dad.mom import Middleware
+from brainiak.dad.mom import Middleware
 from requests.auth import HTTPDigestAuth
 
 from brainiak import settings
@@ -14,7 +14,7 @@ class ServicesTestCase(unittest.TestCase):
         response = requests.get("http://{0}/".format(settings.ELASTICSEARCH_ENDPOINT))
         self.assertEqual(response.status_code, 200)
         version_number = response.json()["version"]["number"]
-        self.assertEqual(version_number, "0.90.12")
+        self.assertEqual(version_number, "7.1.0")
 
     def test_virtuoso(self):
         response = requests.get(

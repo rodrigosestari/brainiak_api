@@ -1,9 +1,7 @@
 import os
-import re
 import shutil
 import subprocess
 import unittest
-import urllib2
 
 import rdflib
 
@@ -16,7 +14,6 @@ def strip(query_string):
 
 
 class SimpleTestCase(unittest.TestCase):
-
     maxDiff = None
 
     def __call__(self, *args, **kwds):
@@ -25,13 +22,13 @@ class SimpleTestCase(unittest.TestCase):
         set up. This means that user-defined Test Cases aren't required to
         include a call to super().setUp().
         """
-        #result = kwds.get("result", None)
+        # result = kwds.get("result", None)
 
         try:
             self._pre_setup()
         except (KeyboardInterrupt, SystemExit):
             raise
-        #except Exception:
+        # except Exception:
         #    result.addError(self, sys.exc_info())
         #    return
 
@@ -41,7 +38,7 @@ class SimpleTestCase(unittest.TestCase):
             self._post_teardown()
         except (KeyboardInterrupt, SystemExit):
             raise
-        #except Exception:
+        # except Exception:
         #    result.addError(self, sys.exc_info())
         #    return
 
@@ -59,7 +56,7 @@ graph = rdflib.Graph()
 
 ISQL = "isql"
 ISQL_CMD = 'echo "%s" | %s'
-ISQL_UP = "DB.DBA.TTLP_MT_LOCAL_FILE('%(ttl)s', '', '%(graph)s');"
+ISQL_UP = "DB.DBA.TTLP_MT(file_to_string_output('%(ttl)s'), '', '%(graph)s');"
 ISQL_DOWN = "SPARQL CLEAR GRAPH <%(graph)s>;"
 ISQL_DROP = "SPARQL DROP GRAPH <%(graph)s>;"
 
@@ -87,14 +84,14 @@ def run_isql(cmd):
 
 
 def copy_ttl_to_virtuoso_dir(ttl):
-    virtuoso_dir = run_isql(ISQL_SERVER).split('\n\n')[-2]
+    virtuoso_dir = run_isql(ISQL_SERVER).decode("utf-8").split('\n\n')[-2]
     fixture_dir, fixture_file = os.path.split(ttl)
     shutil.copyfile(ttl, os.path.join(virtuoso_dir, fixture_file))
     return fixture_file
 
 
 def remove_ttl_from_virtuoso_dir(ttl):
-    virtuoso_dir = run_isql(ISQL_SERVER).split('\n\n')[-2]
+    virtuoso_dir = run_isql(ISQL_SERVER).decode("utf-8").split('\n\n')[-2]
     ttl_path = os.path.join(virtuoso_dir, ttl)
     os.remove(ttl_path)
 
@@ -165,9 +162,9 @@ class QueryTestCase(SimpleTestCase):
         try:
             isql_drop = ISQL_DROP % {"graph": graph}
             run_isql(isql_drop)
-        except Exception, e:
+        except Exception as e:
             pass
-            #print(e)
+            # print(e)
 
     def _post_teardown(self):
         self.remove_inference_options()
@@ -178,7 +175,7 @@ class QueryTestCase(SimpleTestCase):
                 self._drop_graph_from_triplestore(graph)
 
     def process_inference_options(self):
-        #if self.allow_inference:
+        # if self.allow_inference:
         if not self.fixtures_by_graph:
             enable_inference_at_graph(self.graph_uri)
         else:
@@ -186,7 +183,7 @@ class QueryTestCase(SimpleTestCase):
                 enable_inference_at_graph(graph_)
 
     def remove_inference_options(self):
-        #if self.allow_inference:
+        # if self.allow_inference:
         if not self.fixtures_by_graph:
             disable_inference_at_graph(self.graph_uri)
         else:

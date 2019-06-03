@@ -3,8 +3,8 @@
 import tornado
 from tornado.httpclient import HTTPRequest
 from tornado.testing import AsyncTestCase, AsyncHTTPTestCase
-from brainiak import server, greenlet_tornado
 
+from brainiak import server, greenlet_tornado
 
 TIMEOUT = 100  # None or small values cause some integration tests to fail
 
@@ -43,12 +43,23 @@ class TornadoAsyncHTTPTestCase(AsyncHTTPTestCase):
         self.http_client.fetch(request, self.stop, **kwargs)
         return self.wait()
 
+
 ###############
 
 # Mokey patch dependencies bellow
 
 from tornado.curl_httpclient import *
-from tornado.curl_httpclient import _curl_header_callback
+
+
+def _curl_header_callback(headers, header_line):
+    # header_line as returned by curl includes the end-of-line characters.
+    header_line = header_line.strip()
+    if header_line.startswith("HTTP/"):
+        headers.clear()
+        return
+    if not header_line:
+        return
+    headers.parse_line(header_line)
 
 
 def _curl_setup_request(curl, request, buffer, headers):
@@ -98,17 +109,8 @@ def _curl_setup_request(curl, request, buffer, headers):
         write_function = request.streaming_callback
     else:
         write_function = buffer.write
-    if bytes_type is str:  # py2
-        curl.setopt(pycurl.WRITEFUNCTION, write_function)
-    else:  # py3
-        # Upstream pycurl doesn't support py3, but ubuntu 12.10 includes
-        # a fork/port.  That version has a bug in which it passes unicode
-        # strings instead of bytes to the WRITEFUNCTION.  This means that
-        # if you use a WRITEFUNCTION (which tornado always does), you cannot
-        # download arbitrary binary data.  This needs to be fixed in the
-        # ported pycurl package, but in the meantime this lambda will
-        # make it work for downloading (utf8) text.
-        curl.setopt(pycurl.WRITEFUNCTION, lambda s: write_function(utf8(s)))
+
+    curl.setopt(pycurl.WRITEFUNCTION, lambda s: write_function(utf8(s)))
     curl.setopt(pycurl.FOLLOWLOCATION, request.follow_redirects)
     curl.setopt(pycurl.MAXREDIRS, request.max_redirects)
     curl.setopt(pycurl.CONNECTTIMEOUT_MS, int(1000 * request.connect_timeout))
@@ -155,7 +157,7 @@ def _curl_setup_request(curl, request, buffer, headers):
         # (but see version check in _process_queue above)
         curl.setopt(pycurl.IPRESOLVE, pycurl.IPRESOLVE_V4)
 
-  # Set the request method through curl's irritating interface which makes
+    # Set the request method through curl's irritating interface which makes
     # up names for almost every single method
     curl_options = {
         "GET": pycurl.HTTPGET,
@@ -190,6 +192,7 @@ def _curl_setup_request(curl, request, buffer, headers):
             def ioctl(cmd):
                 if cmd == curl.IOCMD_RESTARTREAD:
                     request_buffer.seek(0)
+
             curl.setopt(pycurl.IOCTLFUNCTION, ioctl)
             curl.setopt(pycurl.POSTFIELDSIZE, len(request.body))
         else:

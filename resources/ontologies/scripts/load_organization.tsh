@@ -1,2 +1,2 @@
-DB.DBA.TTLP_MT_LOCAL_FILE('dumps/data_organization.ttl','', 'http://semantica.globo.com/organization/');
+DB.DBA.TTLP_MT(file_to_string_output('/Users/sestari/Documents/brainiak_api/resources/ontologies/schema/data_organization.ttl'), '', 'http://semantica.globo.com/organization/');
 rdfs_rule_set('http://semantica.globo.com/ruleset', 'http://semantica.globo.com/organization/');

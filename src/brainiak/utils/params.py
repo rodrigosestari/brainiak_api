@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
-from copy import copy
 import re
-from urllib import urlencode
-from urlparse import unquote, parse_qs
 from contextlib import contextmanager
+from copy import copy
+from urllib.parse import unquote, parse_qs, urlencode
 
 from tornado.web import HTTPError
 
 from brainiak import settings
 from brainiak.prefixes import expand_uri, safe_slug_to_prefix, extract_prefix, _MAP_PREFIX_TO_SLUG
+from brainiak.utils.config_parser import ConfigParserNoSectionError, parse_section
 from brainiak.utils.i18n import _
 from brainiak.utils.sparql import PATTERN_O, PATTERN_P, find_graph_from_class, find_graph_and_class_from_instance
-from brainiak.utils.config_parser import ConfigParserNoSectionError, parse_section
-
 
 CLIENT_ID_HEADER = "X-Brainiak-Client-Id"
 
@@ -44,6 +42,7 @@ class DefaultParamsDict(dict):
 
 class RequiredParamsDict(DefaultParamsDict):
     "Class used to easily mark required parameters"
+
     def __init__(self, **kw):
         DefaultParamsDict.__init__(self, **kw)
         self.set_required(kw.keys())
@@ -53,6 +52,7 @@ def optionals(*args):
     """Build an instance of DefaultParamsDict from a list of parameter names"""
     result = {key: None for key in args}
     return DefaultParamsDict(**result)
+
 
 # The parameters below as given to ParamDict with other keyword arguments,
 # but they are not URL arguments because they are part of the URL path
@@ -71,7 +71,8 @@ LIST_PARAMS = PAGING_PARAMS + DefaultParamsDict(sort_by="",
                                                 sort_order="ASC",
                                                 sort_include_empty="1")
 
-INSTANCE_PARAMS = optionals('graph_uri', 'class_prefix', 'class_uri', 'instance_prefix', 'instance_uri', 'expand_object_properties', 'meta_properties')
+INSTANCE_PARAMS = optionals('graph_uri', 'class_prefix', 'class_uri', 'instance_prefix', 'instance_uri',
+                            'expand_object_properties', 'meta_properties')
 
 CLASS_PARAMS = optionals('graph_uri', 'class_prefix', 'class_uri')
 
@@ -98,7 +99,8 @@ VALID_PARAMS = [
     'expand_object_properties',
     'meta_properties',
     'pattern',
-    'valid_patterns'
+    'valid_patterns',
+    'inference'
 ]
 
 VALID_PATTERNS = (
@@ -180,12 +182,14 @@ class ParamDict(dict):
         try:
             self.triplestore_config = parse_section(section=auth_client_id)
         except ConfigParserNoSectionError:
-            raise HTTPError(404, _(u"Client-Id provided at '{0}' ({1}) is not known").format(CLIENT_ID_HEADER, auth_client_id))
+            raise HTTPError(404, _(u"Client-Id provided at '{0}' ({1}) is not known").format(CLIENT_ID_HEADER,
+                                                                                             auth_client_id))
 
     def __setitem__(self, key, value):
         """Process collateral effects in params that are related.
         Changes in *_prefix should reflect in *_uri.
         """
+
         def _key_is_undefined(key):
             try:
                 value = dict.__getitem__(self, key)
@@ -232,7 +236,8 @@ class ParamDict(dict):
 
         elif key == "instance_id":
             dict.__setitem__(self, key, value)
-            dict.__setitem__(self, "instance_uri", u"{0}{1}/{2}".format(self["class_prefix"], self["class_name"], self["instance_id"]))
+            dict.__setitem__(self, "instance_uri",
+                             u"{0}{1}/{2}".format(self["class_prefix"], self["class_name"], self["instance_id"]))
             dict.__setitem__(self, "instance_prefix", extract_prefix(self["instance_uri"]))
 
         elif key == "class_prefix":
@@ -289,7 +294,7 @@ class ParamDict(dict):
                 try:
                     self[key] = expand_uri(value)
                 except KeyError as ex:
-                    raise RequiredParamMissing(unicode(ex))
+                    raise RequiredParamMissing(str(ex))
 
     def _post_override(self):
         "This method is called after override_with()  to do any post processing"
@@ -299,7 +304,7 @@ class ParamDict(dict):
         # In order to keep up with Repos, pages numbering start at 1.
         # As for Virtuoso pages start at 0, we convert page, if provided
         if "page" in self.arguments:
-            self["page"] = unicode(int(self["page"]) - 1)
+            self["page"] = str(int(self["page"]) - 1)
 
         if "sort_order" in self.arguments:
             self["sort_order"] = self["sort_order"].upper()
@@ -318,8 +323,10 @@ class ParamDict(dict):
 
     def to_string(self):
         "Return all parameters as param_name=param_value separated by &"
-        excluded_keys = ('class_name', 'class_prefix', 'context_name', 'instance_prefix', 'instance_id', 'graph_uri', 'class_uri')
-        result = u"&".join([u"{0}={1}".format(k, v) for k, v in sorted(self.items()) if (k not in excluded_keys) and (v is not None)])
+        excluded_keys = (
+        'class_name', 'class_prefix', 'context_name', 'instance_prefix', 'instance_id', 'graph_uri', 'class_uri')
+        result = u"&".join(
+            [u"{0}={1}".format(k, v) for k, v in sorted(self.items()) if (k not in excluded_keys) and (v is not None)])
         return result
 
     def format_url_params(self, exclude_keys=None, **kw):

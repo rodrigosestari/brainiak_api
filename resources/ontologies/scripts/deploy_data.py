@@ -11,7 +11,7 @@ SSH_USER = 'virtuoso'
 SSH_PWD = 'virtuoso'
 LOCALFILE = 'data/person.ttl'
 #REMOTEFILE = '/tmp/person.ttl'
-REMOTEFILE = '/opt/semantica/virtuoso_ops/var/lib/virtuoso/db/person.ttl'
+REMOTEFILE = '/Applications/Virtuoso Open Source Edition v7.2.app/Contents/virtuoso-opensource/database/person.ttl'
 
 
 # Setup of connection with remote server
@@ -31,7 +31,7 @@ isql = "isql -U %(user)s -P %(pwd)s -H %(host)s -S %(port)s" %\
 		 "pwd": DATABASE_PASSWORD,
 		 "host": DATABASE_HOST,
 		 "port": DATABASE_PORT}
-isql_cmd = "DB.DBA.TTLP_MT_LOCAL_FILE('%s', '', '%s');" % (REMOTEFILE, GRAPH)
+isql_cmd = "DB.DBA.TTLP_MT('%s', '', '%s');" % (REMOTEFILE, GRAPH)
 cmd = '%s < "%s"' % (isql, isql_cmd)
 
 process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

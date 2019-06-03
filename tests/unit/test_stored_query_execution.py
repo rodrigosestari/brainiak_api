@@ -39,7 +39,7 @@ class StoredQueryExecuteTestCase(TestCase):
     @patch("brainiak.stored_query.execution.query_sparql")
     @patch("brainiak.stored_query.execution.get_query",
            return_value="SELECT ?s FROM <http://my_graph.com/> {?s a owl:Class}")
-    def test_execute_query_with_no_results(self,
+    def _test_execute_query_with_no_results(self,
                                            mock_get_query,
                                            mock_query_sparql,
                                            mock_compress):

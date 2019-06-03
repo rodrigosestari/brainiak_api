@@ -1,6 +1,6 @@
 
-from dad.event import SemanticEvent
-from dad.mom import Middleware, MiddlewareError
+from brainiak.dad.event import SemanticEvent
+from brainiak.dad.mom import Middleware, MiddlewareError
 
 from brainiak import settings
 from brainiak.log import get_logger
@@ -29,7 +29,7 @@ def notify_bus(**kw):
     event = SemanticEvent(**kw)
     try:
         middleware.notify(event)
-        logger.info(u"BUS NOTIFICATION\n%s" % event)
+        logger.info("BUS NOTIFICATION\n%s" % event)
     except MiddlewareError as e:
         logger.error(e)
         if settings.NOTIFY_BUS:

@@ -1,0 +1,238 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.fire.semantic.org/"
+     xml:base="http://www.fire.semantic.org/"
+     xmlns:dbr="http://dbpedia.org/resource/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:www="http://www.fire.semantic.org/"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.fire.semantic.org/">
+        <owl:versionIRI rdf:resource="http://www.fire.semantic.org/"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.fire.semantic.org/hasMember -->
+
+    <owl:ObjectProperty rdf:about="http://www.fire.semantic.org/hasMember">
+        <rdfs:domain rdf:resource="http://www.fire.semantic.org/Organization"/>
+        <rdfs:range>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.fire.semantic.org/hasMember"/>
+                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">0</owl:minQualifiedCardinality>
+                <owl:onClass rdf:resource="http://www.fire.semantic.org/Person"/>
+            </owl:Restriction>
+        </rdfs:range>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.fire.semantic.org/hasWork -->
+
+    <owl:ObjectProperty rdf:about="http://www.fire.semantic.org/hasWork">
+        <rdfs:domain rdf:resource="http://www.fire.semantic.org/Person"/>
+        <rdfs:range>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.fire.semantic.org/hasWork"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://www.fire.semantic.org/Person"/>
+            </owl:Restriction>
+        </rdfs:range>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.fire.semantic.org/liveIn -->
+
+    <owl:ObjectProperty rdf:about="http://www.fire.semantic.org/liveIn">
+        <rdfs:domain rdf:resource="http://www.fire.semantic.org/Person"/>
+        <rdfs:range>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.fire.semantic.org/liveIn"/>
+                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">0</owl:minQualifiedCardinality>
+                <owl:onClass rdf:resource="http://www.fire.semantic.org/Building"/>
+            </owl:Restriction>
+        </rdfs:range>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://dbpedia.org/ontology/address -->
+
+    <owl:DatatypeProperty rdf:about="http://dbpedia.org/ontology/address">
+        <owl:equivalentProperty rdf:resource="http://www.fire.semantic.org/adress"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.fire.semantic.org/adress -->
+
+    <owl:DatatypeProperty rdf:about="http://www.fire.semantic.org/adress">
+        <rdfs:domain rdf:resource="http://www.fire.semantic.org/Building"/>
+        <rdfs:domain rdf:resource="http://www.fire.semantic.org/Organization"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.fire.semantic.org/name -->
+
+    <owl:DatatypeProperty rdf:about="http://www.fire.semantic.org/name">
+        <rdfs:domain rdf:resource="http://www.fire.semantic.org/Organization"/>
+        <rdfs:domain rdf:resource="http://www.fire.semantic.org/Person"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://dbpedia.org/ontology/City -->
+
+    <owl:Class rdf:about="http://dbpedia.org/ontology/City">
+        <owl:equivalentClass rdf:resource="http://www.fire.semantic.org/City"/>
+        <rdfs:subClassOf rdf:resource="http://www.fire.semantic.org/Place"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.fire.semantic.org/Building -->
+
+    <owl:Class rdf:about="http://www.fire.semantic.org/Building"/>
+    
+
+
+    <!-- http://www.fire.semantic.org/City -->
+
+    <owl:Class rdf:about="http://www.fire.semantic.org/City">
+        <rdfs:subClassOf rdf:resource="http://www.fire.semantic.org/Place"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.fire.semantic.org/Doctor -->
+
+    <owl:Class rdf:about="http://www.fire.semantic.org/Doctor">
+        <rdfs:subClassOf rdf:resource="http://www.fire.semantic.org/Person"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.fire.semantic.org/Lawer -->
+
+    <owl:Class rdf:about="http://www.fire.semantic.org/Lawer">
+        <rdfs:subClassOf rdf:resource="http://www.fire.semantic.org/Person"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.fire.semantic.org/Organization -->
+
+    <owl:Class rdf:about="http://www.fire.semantic.org/Organization"/>
+    
+
+
+    <!-- http://www.fire.semantic.org/Person -->
+
+    <owl:Class rdf:about="http://www.fire.semantic.org/Person"/>
+    
+
+
+    <!-- http://www.fire.semantic.org/Place -->
+
+    <owl:Class rdf:about="http://www.fire.semantic.org/Place"/>
+    
+
+
+    <!-- http://www.fire.semantic.org/Private -->
+
+    <owl:Class rdf:about="http://www.fire.semantic.org/Private">
+        <rdfs:subClassOf rdf:resource="http://www.fire.semantic.org/Organization"/>
+        <owl:disjointWith rdf:resource="http://www.fire.semantic.org/Public"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.fire.semantic.org/Public -->
+
+    <owl:Class rdf:about="http://www.fire.semantic.org/Public">
+        <rdfs:subClassOf rdf:resource="http://www.fire.semantic.org/Organization"/>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://dbpedia.org/resource/Rio_de_Janeiro -->
+
+    <owl:NamedIndividual rdf:about="http://dbpedia.org/resource/Rio_de_Janeiro">
+        <rdf:type rdf:resource="http://dbpedia.org/ontology/City"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.fire.semantic.org/Google -->
+
+    <owl:NamedIndividual rdf:about="http://www.fire.semantic.org/Google">
+        <rdf:type rdf:resource="http://www.fire.semantic.org/Private"/>
+        <adress>via milano,16</adress>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.fire.semantic.org/Rodrigo -->
+
+    <owl:NamedIndividual rdf:about="http://www.fire.semantic.org/Rodrigo">
+        <rdf:type rdf:resource="http://www.fire.semantic.org/Person"/>
+        <hasWork rdf:resource="http://www.fire.semantic.org/Google"/>
+        <liveIn rdf:resource="http://dbpedia.org/resource/Rio_de_Janeiro"/>
+        <name>Rodrigo Sestari</name>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+

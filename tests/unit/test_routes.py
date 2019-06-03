@@ -105,7 +105,7 @@ class RouteTestCase(TestCase):
         self.assertTrue(self._groups_match(match_pattern, expected_params))
 
     def _regex_for(self, klass):
-        return filter(lambda u: u.handler_class == klass, ROUTES)[0].regex
+        return list(filter(lambda u: u.handler_class == klass, ROUTES))[0].regex
 
     def _groups_match(self, match, groups):
         if match is None or len(groups) == 0:

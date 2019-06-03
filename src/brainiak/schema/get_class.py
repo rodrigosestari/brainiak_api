@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
+from urllib.parse import urlparse
+
 from brainiak import triplestore, settings
 from brainiak.log import get_logger
 from brainiak.prefixes import MemorizeContext
 from brainiak.suggest.json_schema import SUGGEST_PARAM_SCHEMA
 from brainiak.type_mapper import DATATYPE_PROPERTY, OBJECT_PROPERTY, _MAP_EXPAND_XSD_TO_JSON_TYPE
-from brainiak.utils.i18n import _
 from brainiak.utils.cache import build_key_for_class, memoize
+from brainiak.utils.i18n import _
 from brainiak.utils.links import assemble_url, add_link, crud_links, build_relative_class_url, append_param
 from brainiak.utils.resources import LazyObject
-from brainiak.utils.sparql import add_language_support, filter_values, get_one_value, get_super_properties, InstanceError, bindings_to_dict
+from brainiak.utils.sparql import add_language_support, filter_values, get_one_value, get_super_properties, \
+    InstanceError, bindings_to_dict
 
 logger = LazyObject(get_logger)
 
@@ -45,6 +48,11 @@ def get_schema(query_params):
     return response_dict
 
 
+def absolut_base_url(base_url):
+    parsed = urlparse(base_url)
+    return "{0}://{1}".format(parsed.scheme, parsed.netloc)
+
+
 def assemble_schema_dict(query_params, title, predicates, context, **kw):
     effective_context = {"@language": query_params.get("lang")}
     effective_context.update(context.context)
@@ -58,6 +66,9 @@ def assemble_schema_dict(query_params, title, predicates, context, **kw):
     href_class = assemble_url(schema_url, {"class_prefix": query_params.get("class_prefix", "")})
     # {value} is used here for CMAaaS integration
     instance_href = u"/_/_/_?instance_uri={value}"
+
+    # TODO problem with CMAaS
+    forced_absolute_base_url = absolut_base_url(query_params.base_url)
 
     if 'expand_uri' in query_params:
         expand_uri_param = 'expand_uri={0}'.format(query_params['expand_uri'])
@@ -76,7 +87,7 @@ def assemble_schema_dict(query_params, title, predicates, context, **kw):
             'method': "GET"
         },
         {
-            "href": href,
+            "href": "{0}{1}".format(forced_absolute_base_url, href),
             "method": "POST",
             "rel": "create",
             "schema": {"$ref": "{+_base_url}"}
@@ -188,7 +199,8 @@ def _extract_cardinalities(bindings, predicate_dict):
             try:
                 min_value = int(min_value)
             except ValueError:
-                msg = _(u"The property {0} defines a non-integer owl:minQualifiedCardinality {1}").format(property_, min_value)
+                msg = _(u"The property {0} defines a non-integer owl:minQualifiedCardinality {1}").format(property_,
+                                                                                                          min_value)
                 raise InstanceError(msg)
             else:
                 current_property[range_].update({"minItems": min_value})
@@ -200,7 +212,8 @@ def _extract_cardinalities(bindings, predicate_dict):
             try:
                 max_value = int(max_value)
             except ValueError:
-                msg = _(u"The property {0} defines a non-integer owl:maxQualifiedCardinality {1}").format(property_, max_value)
+                msg = _(u"The property {0} defines a non-integer owl:maxQualifiedCardinality {1}").format(property_,
+                                                                                                          max_value)
                 raise InstanceError(msg)
             else:
                 current_property[range_].update({"maxItems": max_value})
@@ -220,7 +233,7 @@ WHERE {
         UNION { ?s owl:onDataRange ?range }
         UNION { ?s owl:allValuesFrom ?range }
         OPTIONAL { ?range owl:oneOf ?enumeration } .
-        OPTIONAL { ?enumeration rdf:rest ?list_node OPTION(TRANSITIVE, t_min (0)) } .
+        OPTIONAL { ?enumeration rdf:rest ?list_node  } .
         OPTIONAL { ?list_node rdf:first ?enumerated_value } .
         OPTIONAL {
             ?enumerated_value rdfs:label ?enumerated_value_label .
@@ -241,6 +254,7 @@ def query_predicates(query_params, superclasses):
         response = _query_predicate_without_lang(query_params, superclasses)
 
     return response
+
 
 QUERY_PREDICATE_WITH_LANG = u"""
 SELECT DISTINCT ?predicate ?predicate_graph ?predicate_comment ?type ?range ?title ?range_graph ?range_label ?super_property ?domain_class ?unique_value
@@ -513,7 +527,6 @@ def most_specialized_predicate(class_hierarchy, predicate_a, predicate_b):
 
 
 def convert_bindings_dict(context, bindings, cardinalities, superclasses):
-
     super_predicates = get_super_properties(bindings)
     assembled_predicates = {}
 

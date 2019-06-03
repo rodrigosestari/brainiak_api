@@ -21,13 +21,13 @@ def edit_instance(query_params, instance_data):
         graph_uri = query_params['graph_uri']
         class_uri = query_params['class_uri']
     except KeyError as ex:
-        raise HTTPError(404, log_message=_(u"Parameter <{0:s}> is missing in order to update instance.".format(ex)))
+        raise HTTPError(404, log_message=_("Parameter <{0:s}> is missing in order to update instance.".format(ex)))
 
     class_object = get_cached_schema(query_params)
     try:
         triples = create_explicit_triples(instance_uri, instance_data, class_object, graph_uri, query_params)
-    except InstanceError, exception:
-        raise HTTPError(400, log_message=exception.message)
+    except InstanceError as exception:
+        raise HTTPError(400, log_message=str(exception.args))
     implicit_triples = create_implicit_triples(instance_uri, class_uri)
     triples.extend(implicit_triples)
     unique_triples = set(triples)
@@ -37,7 +37,7 @@ def edit_instance(query_params, instance_data):
 
     response = modify_instance(query_params, triples=string_triples, prefix=string_prefixes)
     if not is_modify_response_successful(response):
-        raise HTTPError(500, log_message=_(u"Triplestore could not update triples."))
+        raise HTTPError(500, log_message=_("Triplestore could not update triples."))
 
 
 MODIFY_QUERY = u"""
