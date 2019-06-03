@@ -14,6 +14,11 @@ DB.DBA.TTLP_MT(file_to_string_output('/Users/sestari/Documents/brainiak_api/reso
 SPARQL CLEAR GRAPH <http://test.onto/>;
 DB.DBA.TTLP_MT(file_to_string_output('/Users/sestari/Documents/brainiak_api/resources/ontologies/schema/test.ttl'), '', 'http://test.onto/');
 
+SPARQL CLEAR GRAPH <http://dbpedia.org/ontology/>;
+DB.DBA.TTLP_MT(file_to_string_output('/Users/sestari/Documents/brainiak_api/resources/ontologies/schema/dbpedia.ttl'), '', 'http://dbpedia.org/ontology/');
+
+
+
 
 rdfs_rule_set('http://semantica.globo.com/ruleset', 'http://semantica.globo.com/upper/');
 rdfs_rule_set('http://semantica.globo.com/ruleset', 'http://semantica.globo.com/organization/');
